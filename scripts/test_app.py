@@ -5,8 +5,10 @@
 
 Runs the app headless with Streamlit's AppTest, sets the sidebar like a user would
 and compares every carrier row the app shows with the check table: shipments,
-resolved, on-time rate, transit days, cost, damage. An empty selection must say
-"No shipments". Ends with ALL APP CHECKS PASSED or lists what differs.
+resolved, on-time rate, transit days, cost, damage. The carriers may be the row
+labels of the table or a column named "Carrier". A carrier without shipments must be
+named in a sentence, not shown as a row; an empty selection must say "No shipments".
+Ends with ALL APP CHECKS PASSED or lists what differs.
 """
 
 from __future__ import annotations
@@ -34,6 +36,25 @@ def run(country: str, service: str, month: str) -> AppTest:
     return at
 
 
+def table_of(at: AppTest) -> pd.DataFrame | None:
+    """The app's carrier table, with the carriers as row labels (many apps show them as a column instead)."""
+    if not at.dataframe:
+        return None
+    table = at.dataframe[0].value
+    for name in ("Carrier", "carrier"):
+        if name in table.columns:
+            return table.set_index(name)
+    return table
+
+
+def sentences(at: AppTest) -> list[str]:
+    """Every text the app shows outside its table: captions, markdown, info and warning boxes."""
+    found = []
+    for kind in ("caption", "markdown", "text", "info", "warning", "success"):
+        found += [str(element.value) for element in getattr(at, kind, [])]
+    return found
+
+
 def main() -> None:
     problems, compared = [], 0
     for (country, service, month), group in CHECKS.groupby(["country", "service", "month"], sort=False):
@@ -42,16 +63,18 @@ def main() -> None:
             if row["carrier"] == "":
                 continue                                     # the all-carriers row has no line in the app
             if int(row["shipments"]) == 0:
-                shown = at.dataframe[0].value.index.tolist() if at.dataframe else []
-                said = any(f"No shipments in this selection" in c.value and row["carrier"] in c.value
-                           for c in at.caption)
+                table = table_of(at)
+                shown = table.index.tolist() if table is not None else []
+                said = any(row["carrier"] in s and ("without shipments" in s.lower() or "no shipments" in s.lower())
+                           for s in sentences(at))
                 if row["carrier"] in shown or not said:
-                    problems.append(f"{row['check']}: a carrier without shipments must be named, not shown as a row")
+                    problems.append(f"{row['check']}: a carrier without shipments must be named in a sentence, "
+                                    "not shown as a row")
                 compared += 1
                 continue
-            table = at.dataframe[0].value
-            if row["carrier"] not in table.index:
-                problems.append(f"{row['check']}: carrier missing in the app")
+            table = table_of(at)
+            if table is None or row["carrier"] not in table.index:
+                problems.append(f"{row['check']}: the app's table has no row for {row['carrier']}")
                 continue
             for col, key in COLUMNS.items():
                 compared += 1

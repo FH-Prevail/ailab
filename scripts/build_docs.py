@@ -35,8 +35,8 @@ def trace_worksheet() -> str:
     pretty = space["pretty"]
     out = ["# Recorded traces: a worksheet", "",
            "Real recordings (traces) of a small model (Claude Haiku) that used the shipments MCP server through Claude Code. "
-           "It was allowed to use only the four tools. The same traces are in notebook 3, section 3. For each one, answer "
-           "with your partner:", "",
+           "It was allowed to use only the four tools. The same traces are in notebook 3, section 3. For traces 1 to 3, "
+           "answer these questions with your partner (trace 4 is the demo of slide 19):", "",
            "1. Which tool did it call, with which inputs? Were they the right ones?",
            "2. Does every number in the answer come from a tool result, or from a calculation with one?",
            "3. Is there a claim that no tool supports?", "",
