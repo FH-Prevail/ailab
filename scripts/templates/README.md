@@ -2,19 +2,18 @@
 
 **FH OÖ · Sina Mirshahi · «SESSION_DATE»**
 
-Course material for one session. One case runs through the whole session: an invented company in Upper Austria sells spare parts and must sign new contracts with its carriers. The head of logistics asks: **For each country, which delivery company (carrier) should we use? And when is the faster, more expensive Express service worth its price?**
+Course material for one session. One case runs through the whole session: an invented company in Upper Austria sells spare parts and must sign new contracts with its carriers (delivery companies). The head of logistics asks: **For each country, which delivery company (carrier) should we use? And when is the faster, more expensive Express service worth its price?**
 
 You answer in three steps. First, an AI writes the code for your analysis (vibe analytics). Then an AI builds an app from your answer, without you writing the code (vibe coding). Finally, you give an AI tools, so that it can find information on its own (MCP, the Model Context Protocol). Every step ends with a check that you can trust.
 
 ## Start here
 
-1. You need a Google account (a personal or a university account).
-2. Open notebook 1 with its **Open in Colab** button in the table below, and sign in.
-3. In Colab choose **File, Save a copy in Drive**. The copy opens in a new tab ("Copy of ..."). Work only in that tab.
-4. Run the first code cell (it starts with `# Start here`): click into its code and press **Shift + Enter**. It prints a line that starts with "Ready". If Colab says "This notebook was not authored by Google", click **Run anyway**.
-5. Work in pairs, on one laptop: one person types, the other checks every number against the `# CHECK` lines.
+You need two things: a **Google account**, and one **AI assistant** that you can use (ChatGPT, Gemini, Claude or Copilot).
 
-**The plan:** block 1 is notebook 1 and section 1 of notebook 2. Block 2 is the rest of notebook 2, then notebook 3. At the end you post three lines in the chat or hand them in on paper: one carrier recommendation with its number, one app check you ran, and one thing you learned from a recording.
+1. Open notebook 1: click its **Open in Colab** button in the table below.
+2. Follow the notebook from the top. It tells you each step.
+
+**The plan:** block 1 is notebook 1 and section 1 of notebook 2. Block 2 is the rest of notebook 2, then notebook 3. At the end you post three lines in the chat, or give them to me on paper: one carrier recommendation with its number, one app check you ran, and one thing you learned from a recording.
 
 Share only course data with AI tools, never company data.
 
@@ -28,22 +27,15 @@ Share only course data with AI tools, never company data.
 
 If a button does not open, copy the address: «COLAB1», «COLAB2», «COLAB3». Or open Colab, choose **File, Open notebook, GitHub**, and type `FH-Prevail/ailab`.
 
-## Which AI?
-
-You can use any AI you are allowed to use. Not sure? Try **Gemini in Colab** first.
-
-- **Gemini in Colab:** click the Gemini button in Colab and type only the question. Gemini sees your table.
-- **A chat AI in another tab** (Google AI Studio, ChatGPT, Claude, Microsoft Copilot) cannot see your notebook. Open a new chat and send the context from notebook 1 (section "Which AI?") as your first message. Then send each question in the same chat, and copy the code back into Colab.
-
 ## Words we use
 
 «WORDS»
 
 ## The app in your browser (block 2)
 
-No installation and no account: Streamlit (a Python tool for small web apps) runs inside the browser ([stlite](https://github.com/whitphx/stlite)).
+No installation and no account: Streamlit (a Python tool for small web apps) runs inside the browser ([stlite](https://github.com/whitphx/stlite)). Notebook 2 tells you when to use these links.
 
-- [Starter](«LINK_STARTER»): shows that the data connection works. Replace its code with your AI's app and click **Save**.
+- [Starter](«LINK_STARTER»): the app editor, with a small app that only loads the data. You replace its code with your AI's app and click **Save**.
 - [Reference app](«LINK_REFERENCE»): our version, if you are stuck. Its code is [app/app.py](app/app.py).
 - [An app with one wrong line](app/buggy_app.py): test it and find the line.
 

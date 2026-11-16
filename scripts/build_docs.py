@@ -40,7 +40,12 @@ def trace_worksheet() -> str:
            "1. Which tool did it call, with which inputs? Were they the right ones?",
            "2. Does every number in the answer come from a tool result, or from a calculation with one?",
            "3. Is there a claim that no tool supports?", "",
-           "Trace 3 contains a note that we put into our data on purpose. It tries to control the AI: find it.", ""]
+           "Trace 3 contains a note that we put into our data on purpose. For trace 3, also answer these questions "
+           "before you open **What to notice**:", "",
+           "1. What does that note try to make the AI do?",
+           "2. Did the model follow it? Did it tell you that the note was there?",
+           "3. The tools are read-only. What does that protect, and what does it not protect?",
+           "4. Check one more claim of the answer against the results.", ""]
     for path in sorted((ROOT / "traces").glob("*.json")):
         t = json.loads(path.read_text(encoding="utf-8"))
         out += [f"## {path.stem.replace('_', ' ').capitalize()}", "", f"**Question:** {t['question']}", ""]
