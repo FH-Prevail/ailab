@@ -1,0 +1,7 @@
+# The course runs in Google Colab and in the browser; these are for running everything on your own computer.
+pandas==2.3.3
+numpy
+altair
+streamlit==1.67.0
+mcp==2.3.0
+google-genai==3.3.0

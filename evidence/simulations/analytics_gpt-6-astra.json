@@ -1,0 +1,9 @@
+{
+  "model": "gpt-6-astra",
+  "host": "Codex CLI exec, read-only sandbox, Python allowed, only the raw export in the folder",
+  "recorded": "2026-11-16",
+  "quick_question": {
+    "prompt": "There is a CSV file shipments_2025.csv in this folder: the export of our 2025 shipments. Which carrier is the most reliable? You may run Python with pandas to look at the file. Answer briefly.",
+    "answer": "**Falke Transport leads overall:** 90.9% of shipments arrived on time, and 90.2% arrived on time and undamaged.\n\n**Gams Cargo looks stronger on comparable destinations:** it beats Falke’s on-time rate in every country both serve. Falke’s overall lead reflects its destination mix, so there’s no universal winner.\n\nFigures exclude 125 duplicate rows and unresolved in-transit shipments, combine carrier-name variants, and count lost shipments as failures."
+  }
+}

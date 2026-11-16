@@ -1,0 +1,25 @@
+{
+  "name": "1_supported",
+  "question": "We ship a lot to Italy. Which carrier should get our Italy shipments, and what does that cost per shipment?",
+  "host": "Claude Code (headless), only the four MCP tools allowed",
+  "model": "claude-haiku-5-5",
+  "recorded": "2026-11-16",
+  "system_prompt": "You help the logistics team of a spare-parts distributor compare carriers. Take every number from the tools. Answer in at most six sentences.",
+  "steps": [
+    {
+      "tool": "list_carriers",
+      "args": {},
+      "result": "{\"result\":[{\"carrier\":\"Biber Freight\",\"shipments\":1532,\"countries\":[\"AT\",\"CZ\",\"DE\",\"HU\",\"IT\",\"SI\"]},{\"carrier\":\"Falke Transport\",\"shipments\":2020,\"countries\":[\"AT\",\"CZ\",\"DE\",\"HU\",\"IT\",\"SI\"]},{\"carrier\":\"Gams Cargo\",\"shipments\":1129,\"countries\":[\"AT\",\"HU\",\"IT\",\"SI\"]},{\"carrier\":\"Luchs Logistik\",\"shipments\":1237,\"countries\":[\"AT\",\"CZ\",\"DE\"]}]}",
+      "is_error": false
+    },
+    {
+      "tool": "carrier_scorecard",
+      "args": {
+        "country": "IT"
+      },
+      "result": "{\n  \"selection\": \"IT, all, months 1 to 12\",\n  \"carriers\": [\n    {\n      \"carrier\": \"Gams Cargo\",\n      \"shipments\": 433,\n      \"known_result\": 429,\n      \"on_time_pct\": 85.1,\n      \"transit_days\": 5.11,\n      \"cost_eur\": 40.08,\n      \"damaged_pct\": 1.4\n    },\n    {\n      \"carrier\": \"Biber Freight\",\n      \"shipments\": 180,\n      \"known_result\": 180,\n      \"on_time_pct\": 75.0,\n      \"transit_days\": 5.49,\n      \"cost_eur\": 31.58,\n      \"damaged_pct\": 1.7\n    },\n    {\n      \"carrier\": \"Falke Transport\",\n      \"shipments\": 133,\n      \"known_result\": 133,\n      \"on_time_pct\": 69.9,\n      \"transit_days\": 5.85,\n      \"cost_eur\": 42.48,\n      \"damaged_pct\": 0.8\n    }\n  ],\n  \"carriers_without_shipments\": [\n    \"Luchs Logistik\"\n  ],\n  \"minimum_known_results_to_recommend\": 30\n}",
+      "is_error": false
+    }
+  ],
+  "answer": "For Italy, I'd send shipments to **Gams Cargo**. It had the best on-time rate in 2025 at 85.1% across 429 shipments with a known result, with 5.1 transit days and 1.4% damaged. It costs **€40.08 per shipment**, which is €8.50 more than Biber Freight's €31.58, the cheapest option, but Biber was on time only 75.0% of the time. Falke Transport was the weakest on time at 69.9%, and its cost of €42.48 is the highest. Luchs Logistik doesn't serve Italy. All three Italy carriers cleared the 30-shipment minimum for a recommendation."
+}

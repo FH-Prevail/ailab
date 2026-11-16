@@ -1,0 +1,1521 @@
+{
+  "data": {
+    "rows": 6043,
+    "shipments": 5918,
+    "duplicate_rows": 125,
+    "duplicate_rows_luchs": 91,
+    "columns": [
+      "shipment_id",
+      "ship_date",
+      "promised_date",
+      "delivered_date",
+      "status",
+      "carrier",
+      "service",
+      "warehouse",
+      "country",
+      "city",
+      "distance_km",
+      "weight_kg",
+      "parcels",
+      "cost_eur",
+      "damaged",
+      "customer_id"
+    ],
+    "clean_columns": [
+      "shipment_id",
+      "ship_date",
+      "promised_date",
+      "delivered_date",
+      "status",
+      "carrier",
+      "service",
+      "warehouse",
+      "country",
+      "city",
+      "distance_km",
+      "weight_kg",
+      "parcels",
+      "cost_eur",
+      "damaged",
+      "customer_id",
+      "month",
+      "on_time",
+      "transit_days"
+    ],
+    "first_ship_date": "2025-01-02",
+    "last_ship_date": "2025-12-31",
+    "export_date": "2025-12-31",
+    "carrier_spellings": 6,
+    "carrier_spelling_counts": {
+      "Falke Transport": 2035,
+      "Luchs Logistik": 1328,
+      "Gams Cargo": 1140,
+      "Biber Freight": 970,
+      "Biber Freight GmbH": 491,
+      "BIBER FREIGHT": 79
+    },
+    "carriers": [
+      "Biber Freight",
+      "Falke Transport",
+      "Gams Cargo",
+      "Luchs Logistik"
+    ],
+    "countries": [
+      "AT",
+      "DE",
+      "CZ",
+      "HU",
+      "IT",
+      "SI"
+    ],
+    "country_names": {
+      "AT": "Austria",
+      "DE": "Germany",
+      "CZ": "Czechia",
+      "HU": "Hungary",
+      "IT": "Italy",
+      "SI": "Slovenia"
+    },
+    "cities": 25,
+    "customers": 410,
+    "warehouses": [
+      "Linz",
+      "Wels"
+    ],
+    "status_counts": {
+      "delivered": 5847,
+      "in_transit": 44,
+      "lost": 27
+    },
+    "overdue_in_transit": 7,
+    "not_known_yet": 37,
+    "resolved": 5881,
+    "raw_rows_without_delivery_date": 71,
+    "raw_status_rows": {
+      "delivered": 5972,
+      "in_transit": 44,
+      "lost": 27
+    },
+    "grams_rows": 908,
+    "grams_shipments": 886,
+    "wels_median_weight_before_sep": 18.5,
+    "wels_median_weight_from_sep": 17700.0,
+    "weight_max_raw": 545500.0,
+    "weight_mean_raw": 4719.3,
+    "weight_mean_clean": 30.8,
+    "weight_max_clean": 600.0,
+    "weight_median_clean": 18.6,
+    "express_share_pct": 16.1,
+    "notes": 14,
+    "min_shipments_to_recommend": 30,
+    "rules": [
+      "One row per shipment: drop rows that repeat a shipment_id (keep the first).",
+      "Carrier names: trim spaces, drop ' GmbH' and write them in title case, which leaves four carriers.",
+      "Weight: from 1 September 2025 the new scale at Wels writes grams into weight_kg; divide those rows by 1,000.",
+      "On time: delivered on or before promised_date. Lost counts as late. Still in transit with the promised date already passed (on or before 31 December 2025) counts as late. Still in transit with the promised date after the export is not known yet: leave it out of the on-time rate and count it separately.",
+      "Transit days: calendar days from ship_date to delivered_date, delivered shipments only.",
+      "Damage rate: damaged shipments as a share of delivered shipments.",
+      "Cost per shipment: the average of cost_eur over all shipments."
+    ]
+  },
+  "hand_example": {
+    "rows": [
+      {
+        "shipment_id": "SH-25-05430",
+        "ship_date": "2025-12-01",
+        "promised_date": "2025-12-03",
+        "delivered_date": "2025-12-03",
+        "status": "delivered",
+        "carrier": "Luchs Logistik",
+        "repeat": false,
+        "verdict": "on time"
+      },
+      {
+        "shipment_id": "SH-25-05842",
+        "ship_date": "2025-12-22",
+        "promised_date": "2025-12-24",
+        "delivered_date": "2025-12-30",
+        "status": "delivered",
+        "carrier": "Luchs Logistik",
+        "repeat": false,
+        "verdict": "late"
+      },
+      {
+        "shipment_id": "SH-25-05842",
+        "ship_date": "2025-12-22",
+        "promised_date": "2025-12-24",
+        "delivered_date": "2025-12-30",
+        "status": "delivered",
+        "carrier": "Luchs Logistik",
+        "repeat": true,
+        "verdict": "repeat of the row above: drop it"
+      },
+      {
+        "shipment_id": "SH-25-05850",
+        "ship_date": "2025-12-23",
+        "promised_date": "2025-12-30",
+        "delivered_date": "",
+        "status": "lost",
+        "carrier": "Biber Freight",
+        "repeat": false,
+        "verdict": "lost: late"
+      },
+      {
+        "shipment_id": "SH-25-05809",
+        "ship_date": "2025-12-19",
+        "promised_date": "2025-12-24",
+        "delivered_date": "",
+        "status": "in_transit",
+        "carrier": "Biber Freight",
+        "repeat": false,
+        "verdict": "in transit, promise already passed: late"
+      },
+      {
+        "shipment_id": "SH-25-05918",
+        "ship_date": "2025-12-31",
+        "promised_date": "2026-01-05",
+        "delivered_date": "",
+        "status": "in_transit",
+        "carrier": "Luchs Logistik",
+        "repeat": false,
+        "verdict": "in transit, promise after the export: not known yet"
+      }
+    ],
+    "shipments": 5,
+    "resolved": 4,
+    "on_time": 1,
+    "on_time_pct": 25.0,
+    "dropped_rows_with_date": 3,
+    "dropped_on_time": 1,
+    "dropped_on_time_pct": 33.3,
+    "all_rows": 6,
+    "all_rows_on_time_pct": 16.7
+  },
+  "lazy": {
+    "on_time_pct_missing_as_late": {
+      "BIBER FREIGHT": 89.9,
+      "Biber Freight": 84.8,
+      "Biber Freight GmbH": 84.3,
+      "Falke Transport": 90.1,
+      "Gams Cargo": 88.1,
+      "Luchs Logistik": 82.2
+    },
+    "on_time_pct_missing_dropped": {
+      "BIBER FREIGHT": 89.9,
+      "Biber Freight": 86.4,
+      "Biber Freight GmbH": 84.8,
+      "Falke Transport": 91.2,
+      "Gams Cargo": 89.3,
+      "Luchs Logistik": 83.0
+    },
+    "rows_per_name": {
+      "Falke Transport": 2035,
+      "Luchs Logistik": 1328,
+      "Gams Cargo": 1140,
+      "Biber Freight": 970,
+      "Biber Freight GmbH": 491,
+      "BIBER FREIGHT": 79
+    },
+    "ranking_missing_as_late": [
+      "Falke Transport",
+      "BIBER FREIGHT",
+      "Gams Cargo",
+      "Biber Freight",
+      "Biber Freight GmbH",
+      "Luchs Logistik"
+    ],
+    "ranking_missing_dropped": [
+      "Falke Transport",
+      "BIBER FREIGHT",
+      "Gams Cargo",
+      "Biber Freight",
+      "Biber Freight GmbH",
+      "Luchs Logistik"
+    ]
+  },
+  "luchs_effect_of_rules": {
+    "raw_missing_as_late": 82.2,
+    "repeats_removed_missing_as_late": 87.7,
+    "clean": 88.3
+  },
+  "overall": {
+    "Biber Freight": {
+      "shipments": 1532,
+      "resolved": 1526,
+      "on_time": 1300,
+      "late_or_lost": 226,
+      "not_known_yet": 6,
+      "on_time_pct": 85.2,
+      "transit_days": 3.68,
+      "cost_eur": 25.62,
+      "damaged": 54,
+      "delivered": 1512,
+      "damage_pct": 3.6
+    },
+    "Falke Transport": {
+      "shipments": 2020,
+      "resolved": 2008,
+      "on_time": 1823,
+      "late_or_lost": 185,
+      "not_known_yet": 12,
+      "on_time_pct": 90.8,
+      "transit_days": 3.11,
+      "cost_eur": 31.68,
+      "damaged": 17,
+      "delivered": 1997,
+      "damage_pct": 0.9
+    },
+    "Gams Cargo": {
+      "shipments": 1129,
+      "resolved": 1118,
+      "on_time": 994,
+      "late_or_lost": 124,
+      "not_known_yet": 11,
+      "on_time_pct": 88.9,
+      "transit_days": 4.43,
+      "cost_eur": 36.08,
+      "damaged": 10,
+      "delivered": 1113,
+      "damage_pct": 0.9
+    },
+    "Luchs Logistik": {
+      "shipments": 1237,
+      "resolved": 1229,
+      "on_time": 1085,
+      "late_or_lost": 144,
+      "not_known_yet": 8,
+      "on_time_pct": 88.3,
+      "transit_days": 3.69,
+      "cost_eur": 26.74,
+      "damaged": 16,
+      "delivered": 1225,
+      "damage_pct": 1.3
+    }
+  },
+  "by_country": {
+    "AT": {
+      "Biber Freight": {
+        "shipments": 619,
+        "resolved": 618,
+        "on_time": 553,
+        "late_or_lost": 65,
+        "not_known_yet": 1,
+        "on_time_pct": 89.5,
+        "transit_days": 2.47,
+        "cost_eur": 22.88,
+        "damaged": 24,
+        "delivered": 611,
+        "damage_pct": 3.9
+      },
+      "Falke Transport": {
+        "shipments": 1331,
+        "resolved": 1322,
+        "on_time": 1261,
+        "late_or_lost": 61,
+        "not_known_yet": 9,
+        "on_time_pct": 95.4,
+        "transit_days": 2.35,
+        "cost_eur": 28.96,
+        "damaged": 11,
+        "delivered": 1316,
+        "damage_pct": 0.8
+      },
+      "Gams Cargo": {
+        "shipments": 186,
+        "resolved": 186,
+        "on_time": 184,
+        "late_or_lost": 2,
+        "not_known_yet": 0,
+        "on_time_pct": 98.9,
+        "transit_days": 2.18,
+        "cost_eur": 27.88,
+        "damaged": 0,
+        "delivered": 186,
+        "damage_pct": 0.0
+      },
+      "Luchs Logistik": {
+        "shipments": 293,
+        "resolved": 292,
+        "on_time": 255,
+        "late_or_lost": 37,
+        "not_known_yet": 1,
+        "on_time_pct": 87.3,
+        "transit_days": 2.63,
+        "cost_eur": 24.67,
+        "damaged": 4,
+        "delivered": 292,
+        "damage_pct": 1.4
+      }
+    },
+    "DE": {
+      "Biber Freight": {
+        "shipments": 278,
+        "resolved": 277,
+        "on_time": 238,
+        "late_or_lost": 39,
+        "not_known_yet": 1,
+        "on_time_pct": 85.9,
+        "transit_days": 4.12,
+        "cost_eur": 26.26,
+        "damaged": 13,
+        "delivered": 275,
+        "damage_pct": 4.7
+      },
+      "Falke Transport": {
+        "shipments": 320,
+        "resolved": 319,
+        "on_time": 277,
+        "late_or_lost": 42,
+        "not_known_yet": 1,
+        "on_time_pct": 86.8,
+        "transit_days": 4.03,
+        "cost_eur": 35.06,
+        "damaged": 4,
+        "delivered": 315,
+        "damage_pct": 1.3
+      },
+      "Luchs Logistik": {
+        "shipments": 631,
+        "resolved": 626,
+        "on_time": 558,
+        "late_or_lost": 68,
+        "not_known_yet": 5,
+        "on_time_pct": 89.1,
+        "transit_days": 3.98,
+        "cost_eur": 28.69,
+        "damaged": 10,
+        "delivered": 624,
+        "damage_pct": 1.6
+      }
+    },
+    "CZ": {
+      "Biber Freight": {
+        "shipments": 222,
+        "resolved": 222,
+        "on_time": 188,
+        "late_or_lost": 34,
+        "not_known_yet": 0,
+        "on_time_pct": 84.7,
+        "transit_days": 3.73,
+        "cost_eur": 23.55,
+        "damaged": 5,
+        "delivered": 218,
+        "damage_pct": 2.3
+      },
+      "Falke Transport": {
+        "shipments": 61,
+        "resolved": 61,
+        "on_time": 55,
+        "late_or_lost": 6,
+        "not_known_yet": 0,
+        "on_time_pct": 90.2,
+        "transit_days": 3.72,
+        "cost_eur": 30.12,
+        "damaged": 1,
+        "delivered": 61,
+        "damage_pct": 1.6
+      },
+      "Luchs Logistik": {
+        "shipments": 313,
+        "resolved": 311,
+        "on_time": 272,
+        "late_or_lost": 39,
+        "not_known_yet": 2,
+        "on_time_pct": 87.5,
+        "transit_days": 4.14,
+        "cost_eur": 24.75,
+        "damaged": 2,
+        "delivered": 309,
+        "damage_pct": 0.6
+      }
+    },
+    "HU": {
+      "Biber Freight": {
+        "shipments": 139,
+        "resolved": 136,
+        "on_time": 105,
+        "late_or_lost": 31,
+        "not_known_yet": 3,
+        "on_time_pct": 77.2,
+        "transit_days": 5.41,
+        "cost_eur": 30.95,
+        "damaged": 6,
+        "delivered": 136,
+        "damage_pct": 4.4
+      },
+      "Falke Transport": {
+        "shipments": 99,
+        "resolved": 98,
+        "on_time": 75,
+        "late_or_lost": 23,
+        "not_known_yet": 1,
+        "on_time_pct": 76.5,
+        "transit_days": 5.65,
+        "cost_eur": 39.97,
+        "damaged": 0,
+        "delivered": 97,
+        "damage_pct": 0.0
+      },
+      "Gams Cargo": {
+        "shipments": 290,
+        "resolved": 288,
+        "on_time": 255,
+        "late_or_lost": 33,
+        "not_known_yet": 2,
+        "on_time_pct": 88.5,
+        "transit_days": 5.19,
+        "cost_eur": 38.85,
+        "damaged": 3,
+        "delivered": 287,
+        "damage_pct": 1.0
+      }
+    },
+    "IT": {
+      "Biber Freight": {
+        "shipments": 180,
+        "resolved": 180,
+        "on_time": 135,
+        "late_or_lost": 45,
+        "not_known_yet": 0,
+        "on_time_pct": 75.0,
+        "transit_days": 5.49,
+        "cost_eur": 31.58,
+        "damaged": 3,
+        "delivered": 180,
+        "damage_pct": 1.7
+      },
+      "Falke Transport": {
+        "shipments": 133,
+        "resolved": 133,
+        "on_time": 93,
+        "late_or_lost": 40,
+        "not_known_yet": 0,
+        "on_time_pct": 69.9,
+        "transit_days": 5.85,
+        "cost_eur": 42.48,
+        "damaged": 1,
+        "delivered": 133,
+        "damage_pct": 0.8
+      },
+      "Gams Cargo": {
+        "shipments": 433,
+        "resolved": 429,
+        "on_time": 365,
+        "late_or_lost": 64,
+        "not_known_yet": 4,
+        "on_time_pct": 85.1,
+        "transit_days": 5.11,
+        "cost_eur": 40.08,
+        "damaged": 6,
+        "delivered": 425,
+        "damage_pct": 1.4
+      }
+    },
+    "SI": {
+      "Biber Freight": {
+        "shipments": 94,
+        "resolved": 93,
+        "on_time": 81,
+        "late_or_lost": 12,
+        "not_known_yet": 1,
+        "on_time_pct": 87.1,
+        "transit_days": 4.18,
+        "cost_eur": 27.3,
+        "damaged": 3,
+        "delivered": 92,
+        "damage_pct": 3.3
+      },
+      "Falke Transport": {
+        "shipments": 76,
+        "resolved": 75,
+        "on_time": 62,
+        "late_or_lost": 13,
+        "not_known_yet": 1,
+        "on_time_pct": 82.7,
+        "transit_days": 4.07,
+        "cost_eur": 36.47,
+        "damaged": 0,
+        "delivered": 75,
+        "damage_pct": 0.0
+      },
+      "Gams Cargo": {
+        "shipments": 220,
+        "resolved": 215,
+        "on_time": 190,
+        "late_or_lost": 25,
+        "not_known_yet": 5,
+        "on_time_pct": 88.4,
+        "transit_days": 4.03,
+        "cost_eur": 31.45,
+        "damaged": 1,
+        "delivered": 215,
+        "damage_pct": 0.5
+      }
+    }
+  },
+  "by_country_service": {
+    "AT": {
+      "Standard": {
+        "Biber Freight": {
+          "shipments": 500,
+          "resolved": 499,
+          "on_time": 448,
+          "late_or_lost": 51,
+          "not_known_yet": 1,
+          "on_time_pct": 89.8,
+          "transit_days": 2.65,
+          "cost_eur": 20.31,
+          "damaged": 15,
+          "delivered": 495,
+          "damage_pct": 3.0
+        },
+        "Falke Transport": {
+          "shipments": 1079,
+          "resolved": 1070,
+          "on_time": 1015,
+          "late_or_lost": 55,
+          "not_known_yet": 9,
+          "on_time_pct": 94.9,
+          "transit_days": 2.55,
+          "cost_eur": 25.44,
+          "damaged": 9,
+          "delivered": 1064,
+          "damage_pct": 0.8
+        },
+        "Gams Cargo": {
+          "shipments": 150,
+          "resolved": 150,
+          "on_time": 148,
+          "late_or_lost": 2,
+          "not_known_yet": 0,
+          "on_time_pct": 98.7,
+          "transit_days": 2.37,
+          "cost_eur": 25.15,
+          "damaged": 0,
+          "delivered": 150,
+          "damage_pct": 0.0
+        },
+        "Luchs Logistik": {
+          "shipments": 275,
+          "resolved": 274,
+          "on_time": 249,
+          "late_or_lost": 25,
+          "not_known_yet": 1,
+          "on_time_pct": 90.9,
+          "transit_days": 2.64,
+          "cost_eur": 23.9,
+          "damaged": 4,
+          "delivered": 274,
+          "damage_pct": 1.5
+        }
+      },
+      "Express": {
+        "Biber Freight": {
+          "shipments": 119,
+          "resolved": 119,
+          "on_time": 105,
+          "late_or_lost": 14,
+          "not_known_yet": 0,
+          "on_time_pct": 88.2,
+          "transit_days": 1.7,
+          "cost_eur": 33.67,
+          "damaged": 9,
+          "delivered": 116,
+          "damage_pct": 7.8
+        },
+        "Falke Transport": {
+          "shipments": 252,
+          "resolved": 252,
+          "on_time": 246,
+          "late_or_lost": 6,
+          "not_known_yet": 0,
+          "on_time_pct": 97.6,
+          "transit_days": 1.5,
+          "cost_eur": 44.05,
+          "damaged": 2,
+          "delivered": 252,
+          "damage_pct": 0.8
+        },
+        "Gams Cargo": {
+          "shipments": 36,
+          "resolved": 36,
+          "on_time": 36,
+          "late_or_lost": 0,
+          "not_known_yet": 0,
+          "on_time_pct": 100.0,
+          "transit_days": 1.39,
+          "cost_eur": 39.25,
+          "damaged": 0,
+          "delivered": 36,
+          "damage_pct": 0.0
+        },
+        "Luchs Logistik": {
+          "shipments": 18,
+          "resolved": 18,
+          "on_time": 6,
+          "late_or_lost": 12,
+          "not_known_yet": 0,
+          "on_time_pct": 33.3,
+          "transit_days": 2.44,
+          "cost_eur": 36.42,
+          "damaged": 0,
+          "delivered": 18,
+          "damage_pct": 0.0
+        }
+      }
+    },
+    "DE": {
+      "Standard": {
+        "Biber Freight": {
+          "shipments": 235,
+          "resolved": 234,
+          "on_time": 198,
+          "late_or_lost": 36,
+          "not_known_yet": 1,
+          "on_time_pct": 84.6,
+          "transit_days": 4.39,
+          "cost_eur": 24.04,
+          "damaged": 11,
+          "delivered": 232,
+          "damage_pct": 4.7
+        },
+        "Falke Transport": {
+          "shipments": 267,
+          "resolved": 266,
+          "on_time": 233,
+          "late_or_lost": 33,
+          "not_known_yet": 1,
+          "on_time_pct": 87.6,
+          "transit_days": 4.22,
+          "cost_eur": 31.05,
+          "damaged": 4,
+          "delivered": 262,
+          "damage_pct": 1.5
+        },
+        "Luchs Logistik": {
+          "shipments": 592,
+          "resolved": 587,
+          "on_time": 543,
+          "late_or_lost": 44,
+          "not_known_yet": 5,
+          "on_time_pct": 92.5,
+          "transit_days": 3.99,
+          "cost_eur": 27.59,
+          "damaged": 8,
+          "delivered": 585,
+          "damage_pct": 1.4
+        }
+      },
+      "Express": {
+        "Biber Freight": {
+          "shipments": 43,
+          "resolved": 43,
+          "on_time": 40,
+          "late_or_lost": 3,
+          "not_known_yet": 0,
+          "on_time_pct": 93.0,
+          "transit_days": 2.67,
+          "cost_eur": 38.35,
+          "damaged": 2,
+          "delivered": 43,
+          "damage_pct": 4.7
+        },
+        "Falke Transport": {
+          "shipments": 53,
+          "resolved": 53,
+          "on_time": 44,
+          "late_or_lost": 9,
+          "not_known_yet": 0,
+          "on_time_pct": 83.0,
+          "transit_days": 3.09,
+          "cost_eur": 55.25,
+          "damaged": 0,
+          "delivered": 53,
+          "damage_pct": 0.0
+        },
+        "Luchs Logistik": {
+          "shipments": 39,
+          "resolved": 39,
+          "on_time": 15,
+          "late_or_lost": 24,
+          "not_known_yet": 0,
+          "on_time_pct": 38.5,
+          "transit_days": 3.77,
+          "cost_eur": 45.26,
+          "damaged": 2,
+          "delivered": 39,
+          "damage_pct": 5.1
+        }
+      }
+    },
+    "CZ": {
+      "Standard": {
+        "Biber Freight": {
+          "shipments": 174,
+          "resolved": 174,
+          "on_time": 144,
+          "late_or_lost": 30,
+          "not_known_yet": 0,
+          "on_time_pct": 82.8,
+          "transit_days": 4.05,
+          "cost_eur": 20.66,
+          "damaged": 4,
+          "delivered": 170,
+          "damage_pct": 2.4
+        },
+        "Falke Transport": {
+          "shipments": 52,
+          "resolved": 52,
+          "on_time": 46,
+          "late_or_lost": 6,
+          "not_known_yet": 0,
+          "on_time_pct": 88.5,
+          "transit_days": 4.0,
+          "cost_eur": 26.7,
+          "damaged": 1,
+          "delivered": 52,
+          "damage_pct": 1.9
+        },
+        "Luchs Logistik": {
+          "shipments": 292,
+          "resolved": 290,
+          "on_time": 260,
+          "late_or_lost": 30,
+          "not_known_yet": 2,
+          "on_time_pct": 89.7,
+          "transit_days": 4.18,
+          "cost_eur": 23.57,
+          "damaged": 2,
+          "delivered": 288,
+          "damage_pct": 0.7
+        }
+      },
+      "Express": {
+        "Biber Freight": {
+          "shipments": 48,
+          "resolved": 48,
+          "on_time": 44,
+          "late_or_lost": 4,
+          "not_known_yet": 0,
+          "on_time_pct": 91.7,
+          "transit_days": 2.62,
+          "cost_eur": 34.04,
+          "damaged": 1,
+          "delivered": 48,
+          "damage_pct": 2.1
+        },
+        "Falke Transport": {
+          "shipments": 9,
+          "resolved": 9,
+          "on_time": 9,
+          "late_or_lost": 0,
+          "not_known_yet": 0,
+          "on_time_pct": 100.0,
+          "transit_days": 2.11,
+          "cost_eur": 49.9,
+          "damaged": 0,
+          "delivered": 9,
+          "damage_pct": 0.0
+        },
+        "Luchs Logistik": {
+          "shipments": 21,
+          "resolved": 21,
+          "on_time": 12,
+          "late_or_lost": 9,
+          "not_known_yet": 0,
+          "on_time_pct": 57.1,
+          "transit_days": 3.52,
+          "cost_eur": 41.15,
+          "damaged": 0,
+          "delivered": 21,
+          "damage_pct": 0.0
+        }
+      }
+    },
+    "HU": {
+      "Standard": {
+        "Biber Freight": {
+          "shipments": 111,
+          "resolved": 109,
+          "on_time": 84,
+          "late_or_lost": 25,
+          "not_known_yet": 2,
+          "on_time_pct": 77.1,
+          "transit_days": 6.01,
+          "cost_eur": 26.78,
+          "damaged": 5,
+          "delivered": 109,
+          "damage_pct": 4.6
+        },
+        "Falke Transport": {
+          "shipments": 81,
+          "resolved": 80,
+          "on_time": 62,
+          "late_or_lost": 18,
+          "not_known_yet": 1,
+          "on_time_pct": 77.5,
+          "transit_days": 6.16,
+          "cost_eur": 34.63,
+          "damaged": 0,
+          "delivered": 79,
+          "damage_pct": 0.0
+        },
+        "Gams Cargo": {
+          "shipments": 239,
+          "resolved": 237,
+          "on_time": 207,
+          "late_or_lost": 30,
+          "not_known_yet": 2,
+          "on_time_pct": 87.3,
+          "transit_days": 5.77,
+          "cost_eur": 35.21,
+          "damaged": 2,
+          "delivered": 236,
+          "damage_pct": 0.8
+        }
+      },
+      "Express": {
+        "Biber Freight": {
+          "shipments": 28,
+          "resolved": 27,
+          "on_time": 21,
+          "late_or_lost": 6,
+          "not_known_yet": 1,
+          "on_time_pct": 77.8,
+          "transit_days": 3.0,
+          "cost_eur": 47.46,
+          "damaged": 1,
+          "delivered": 27,
+          "damage_pct": 3.7
+        },
+        "Falke Transport": {
+          "shipments": 18,
+          "resolved": 18,
+          "on_time": 13,
+          "late_or_lost": 5,
+          "not_known_yet": 0,
+          "on_time_pct": 72.2,
+          "transit_days": 3.39,
+          "cost_eur": 63.98,
+          "damaged": 0,
+          "delivered": 18,
+          "damage_pct": 0.0
+        },
+        "Gams Cargo": {
+          "shipments": 51,
+          "resolved": 51,
+          "on_time": 48,
+          "late_or_lost": 3,
+          "not_known_yet": 0,
+          "on_time_pct": 94.1,
+          "transit_days": 2.51,
+          "cost_eur": 55.91,
+          "damaged": 1,
+          "delivered": 51,
+          "damage_pct": 2.0
+        }
+      }
+    },
+    "IT": {
+      "Standard": {
+        "Biber Freight": {
+          "shipments": 143,
+          "resolved": 143,
+          "on_time": 109,
+          "late_or_lost": 34,
+          "not_known_yet": 0,
+          "on_time_pct": 76.2,
+          "transit_days": 6.08,
+          "cost_eur": 28.18,
+          "damaged": 3,
+          "delivered": 143,
+          "damage_pct": 2.1
+        },
+        "Falke Transport": {
+          "shipments": 111,
+          "resolved": 111,
+          "on_time": 77,
+          "late_or_lost": 34,
+          "not_known_yet": 0,
+          "on_time_pct": 69.4,
+          "transit_days": 6.32,
+          "cost_eur": 38.72,
+          "damaged": 1,
+          "delivered": 111,
+          "damage_pct": 0.9
+        },
+        "Gams Cargo": {
+          "shipments": 347,
+          "resolved": 343,
+          "on_time": 289,
+          "late_or_lost": 54,
+          "not_known_yet": 4,
+          "on_time_pct": 84.3,
+          "transit_days": 5.71,
+          "cost_eur": 35.2,
+          "damaged": 5,
+          "delivered": 340,
+          "damage_pct": 1.5
+        }
+      },
+      "Express": {
+        "Biber Freight": {
+          "shipments": 37,
+          "resolved": 37,
+          "on_time": 26,
+          "late_or_lost": 11,
+          "not_known_yet": 0,
+          "on_time_pct": 70.3,
+          "transit_days": 3.24,
+          "cost_eur": 44.72,
+          "damaged": 0,
+          "delivered": 37,
+          "damage_pct": 0.0
+        },
+        "Falke Transport": {
+          "shipments": 22,
+          "resolved": 22,
+          "on_time": 16,
+          "late_or_lost": 6,
+          "not_known_yet": 0,
+          "on_time_pct": 72.7,
+          "transit_days": 3.45,
+          "cost_eur": 61.45,
+          "damaged": 0,
+          "delivered": 22,
+          "damage_pct": 0.0
+        },
+        "Gams Cargo": {
+          "shipments": 86,
+          "resolved": 86,
+          "on_time": 76,
+          "late_or_lost": 10,
+          "not_known_yet": 0,
+          "on_time_pct": 88.4,
+          "transit_days": 2.73,
+          "cost_eur": 59.8,
+          "damaged": 1,
+          "delivered": 85,
+          "damage_pct": 1.2
+        }
+      }
+    },
+    "SI": {
+      "Standard": {
+        "Biber Freight": {
+          "shipments": 77,
+          "resolved": 76,
+          "on_time": 66,
+          "late_or_lost": 10,
+          "not_known_yet": 1,
+          "on_time_pct": 86.8,
+          "transit_days": 4.53,
+          "cost_eur": 23.38,
+          "damaged": 2,
+          "delivered": 75,
+          "damage_pct": 2.7
+        },
+        "Falke Transport": {
+          "shipments": 63,
+          "resolved": 63,
+          "on_time": 53,
+          "late_or_lost": 10,
+          "not_known_yet": 0,
+          "on_time_pct": 84.1,
+          "transit_days": 4.22,
+          "cost_eur": 32.27,
+          "damaged": 0,
+          "delivered": 63,
+          "damage_pct": 0.0
+        },
+        "Gams Cargo": {
+          "shipments": 180,
+          "resolved": 175,
+          "on_time": 152,
+          "late_or_lost": 23,
+          "not_known_yet": 5,
+          "on_time_pct": 86.9,
+          "transit_days": 4.35,
+          "cost_eur": 28.93,
+          "damaged": 0,
+          "delivered": 175,
+          "damage_pct": 0.0
+        }
+      },
+      "Express": {
+        "Biber Freight": {
+          "shipments": 17,
+          "resolved": 17,
+          "on_time": 15,
+          "late_or_lost": 2,
+          "not_known_yet": 0,
+          "on_time_pct": 88.2,
+          "transit_days": 2.65,
+          "cost_eur": 45.06,
+          "damaged": 1,
+          "delivered": 17,
+          "damage_pct": 5.9
+        },
+        "Falke Transport": {
+          "shipments": 13,
+          "resolved": 12,
+          "on_time": 9,
+          "late_or_lost": 3,
+          "not_known_yet": 1,
+          "on_time_pct": 75.0,
+          "transit_days": 3.25,
+          "cost_eur": 56.85,
+          "damaged": 0,
+          "delivered": 12,
+          "damage_pct": 0.0
+        },
+        "Gams Cargo": {
+          "shipments": 40,
+          "resolved": 40,
+          "on_time": 38,
+          "late_or_lost": 2,
+          "not_known_yet": 0,
+          "on_time_pct": 95.0,
+          "transit_days": 2.62,
+          "cost_eur": 42.83,
+          "damaged": 1,
+          "delivered": 40,
+          "damage_pct": 2.5
+        }
+      }
+    }
+  },
+  "best_by_country": {
+    "AT": {
+      "carrier": "Gams Cargo",
+      "shipments": 186,
+      "resolved": 186,
+      "on_time": 184,
+      "late_or_lost": 2,
+      "not_known_yet": 0,
+      "on_time_pct": 98.9,
+      "transit_days": 2.18,
+      "cost_eur": 27.88,
+      "damaged": 0,
+      "delivered": 186,
+      "damage_pct": 0.0,
+      "runner_up": "Falke Transport",
+      "runner_up_on_time_pct": 95.4,
+      "margin_pts": 3.5
+    },
+    "DE": {
+      "carrier": "Luchs Logistik",
+      "shipments": 631,
+      "resolved": 626,
+      "on_time": 558,
+      "late_or_lost": 68,
+      "not_known_yet": 5,
+      "on_time_pct": 89.1,
+      "transit_days": 3.98,
+      "cost_eur": 28.69,
+      "damaged": 10,
+      "delivered": 624,
+      "damage_pct": 1.6,
+      "runner_up": "Falke Transport",
+      "runner_up_on_time_pct": 86.8,
+      "margin_pts": 2.3
+    },
+    "CZ": {
+      "carrier": "Falke Transport",
+      "shipments": 61,
+      "resolved": 61,
+      "on_time": 55,
+      "late_or_lost": 6,
+      "not_known_yet": 0,
+      "on_time_pct": 90.2,
+      "transit_days": 3.72,
+      "cost_eur": 30.12,
+      "damaged": 1,
+      "delivered": 61,
+      "damage_pct": 1.6,
+      "runner_up": "Luchs Logistik",
+      "runner_up_on_time_pct": 87.5,
+      "margin_pts": 2.7
+    },
+    "HU": {
+      "carrier": "Gams Cargo",
+      "shipments": 290,
+      "resolved": 288,
+      "on_time": 255,
+      "late_or_lost": 33,
+      "not_known_yet": 2,
+      "on_time_pct": 88.5,
+      "transit_days": 5.19,
+      "cost_eur": 38.85,
+      "damaged": 3,
+      "delivered": 287,
+      "damage_pct": 1.0,
+      "runner_up": "Biber Freight",
+      "runner_up_on_time_pct": 77.2,
+      "margin_pts": 11.3
+    },
+    "IT": {
+      "carrier": "Gams Cargo",
+      "shipments": 433,
+      "resolved": 429,
+      "on_time": 365,
+      "late_or_lost": 64,
+      "not_known_yet": 4,
+      "on_time_pct": 85.1,
+      "transit_days": 5.11,
+      "cost_eur": 40.08,
+      "damaged": 6,
+      "delivered": 425,
+      "damage_pct": 1.4,
+      "runner_up": "Biber Freight",
+      "runner_up_on_time_pct": 75.0,
+      "margin_pts": 10.1
+    },
+    "SI": {
+      "carrier": "Gams Cargo",
+      "shipments": 220,
+      "resolved": 215,
+      "on_time": 190,
+      "late_or_lost": 25,
+      "not_known_yet": 5,
+      "on_time_pct": 88.4,
+      "transit_days": 4.03,
+      "cost_eur": 31.45,
+      "damaged": 1,
+      "delivered": 215,
+      "damage_pct": 0.5,
+      "runner_up": "Biber Freight",
+      "runner_up_on_time_pct": 87.1,
+      "margin_pts": 1.3
+    }
+  },
+  "best_by_country_standard": {
+    "AT": {
+      "carrier": "Gams Cargo",
+      "shipments": 150,
+      "resolved": 150,
+      "on_time": 148,
+      "late_or_lost": 2,
+      "not_known_yet": 0,
+      "on_time_pct": 98.7,
+      "transit_days": 2.37,
+      "cost_eur": 25.15,
+      "damaged": 0,
+      "delivered": 150,
+      "damage_pct": 0.0,
+      "runner_up": "Falke Transport",
+      "runner_up_on_time_pct": 94.9,
+      "margin_pts": 3.8
+    },
+    "DE": {
+      "carrier": "Luchs Logistik",
+      "shipments": 592,
+      "resolved": 587,
+      "on_time": 543,
+      "late_or_lost": 44,
+      "not_known_yet": 5,
+      "on_time_pct": 92.5,
+      "transit_days": 3.99,
+      "cost_eur": 27.59,
+      "damaged": 8,
+      "delivered": 585,
+      "damage_pct": 1.4,
+      "runner_up": "Falke Transport",
+      "runner_up_on_time_pct": 87.6,
+      "margin_pts": 4.9
+    },
+    "CZ": {
+      "carrier": "Luchs Logistik",
+      "shipments": 292,
+      "resolved": 290,
+      "on_time": 260,
+      "late_or_lost": 30,
+      "not_known_yet": 2,
+      "on_time_pct": 89.7,
+      "transit_days": 4.18,
+      "cost_eur": 23.57,
+      "damaged": 2,
+      "delivered": 288,
+      "damage_pct": 0.7,
+      "runner_up": "Falke Transport",
+      "runner_up_on_time_pct": 88.5,
+      "margin_pts": 1.2
+    },
+    "HU": {
+      "carrier": "Gams Cargo",
+      "shipments": 239,
+      "resolved": 237,
+      "on_time": 207,
+      "late_or_lost": 30,
+      "not_known_yet": 2,
+      "on_time_pct": 87.3,
+      "transit_days": 5.77,
+      "cost_eur": 35.21,
+      "damaged": 2,
+      "delivered": 236,
+      "damage_pct": 0.8,
+      "runner_up": "Falke Transport",
+      "runner_up_on_time_pct": 77.5,
+      "margin_pts": 9.8
+    },
+    "IT": {
+      "carrier": "Gams Cargo",
+      "shipments": 347,
+      "resolved": 343,
+      "on_time": 289,
+      "late_or_lost": 54,
+      "not_known_yet": 4,
+      "on_time_pct": 84.3,
+      "transit_days": 5.71,
+      "cost_eur": 35.2,
+      "damaged": 5,
+      "delivered": 340,
+      "damage_pct": 1.5,
+      "runner_up": "Biber Freight",
+      "runner_up_on_time_pct": 76.2,
+      "margin_pts": 8.1
+    },
+    "SI": {
+      "carrier": "Gams Cargo",
+      "shipments": 180,
+      "resolved": 175,
+      "on_time": 152,
+      "late_or_lost": 23,
+      "not_known_yet": 5,
+      "on_time_pct": 86.9,
+      "transit_days": 4.35,
+      "cost_eur": 28.93,
+      "damaged": 0,
+      "delivered": 175,
+      "damage_pct": 0.0,
+      "runner_up": "Biber Freight",
+      "runner_up_on_time_pct": 86.8,
+      "margin_pts": 0.1
+    }
+  },
+  "express": {
+    "Biber Freight": {
+      "Standard": {
+        "shipments": 1240,
+        "resolved": 1235,
+        "on_time": 1049,
+        "late_or_lost": 186,
+        "not_known_yet": 5,
+        "on_time_pct": 84.9,
+        "transit_days": 3.99,
+        "cost_eur": 22.75,
+        "damaged": 40,
+        "delivered": 1224,
+        "damage_pct": 3.3
+      },
+      "Express": {
+        "shipments": 292,
+        "resolved": 291,
+        "on_time": 251,
+        "late_or_lost": 40,
+        "not_known_yet": 1,
+        "on_time_pct": 86.3,
+        "transit_days": 2.38,
+        "cost_eur": 37.8,
+        "damaged": 14,
+        "delivered": 288,
+        "damage_pct": 4.9
+      }
+    },
+    "Falke Transport": {
+      "Standard": {
+        "shipments": 1653,
+        "resolved": 1642,
+        "on_time": 1486,
+        "late_or_lost": 156,
+        "not_known_yet": 11,
+        "on_time_pct": 90.5,
+        "transit_days": 3.36,
+        "cost_eur": 27.99,
+        "damaged": 15,
+        "delivered": 1631,
+        "damage_pct": 0.9
+      },
+      "Express": {
+        "shipments": 367,
+        "resolved": 366,
+        "on_time": 337,
+        "late_or_lost": 29,
+        "not_known_yet": 1,
+        "on_time_pct": 92.1,
+        "transit_days": 2.01,
+        "cost_eur": 48.28,
+        "damaged": 2,
+        "delivered": 366,
+        "damage_pct": 0.5
+      }
+    },
+    "Gams Cargo": {
+      "Standard": {
+        "shipments": 916,
+        "resolved": 905,
+        "on_time": 796,
+        "late_or_lost": 109,
+        "not_known_yet": 11,
+        "on_time_pct": 88.0,
+        "transit_days": 4.9,
+        "cost_eur": 32.32,
+        "damaged": 7,
+        "delivered": 901,
+        "damage_pct": 0.8
+      },
+      "Express": {
+        "shipments": 213,
+        "resolved": 213,
+        "on_time": 198,
+        "late_or_lost": 15,
+        "not_known_yet": 0,
+        "on_time_pct": 93.0,
+        "transit_days": 2.43,
+        "cost_eur": 52.21,
+        "damaged": 3,
+        "delivered": 212,
+        "damage_pct": 1.4
+      }
+    },
+    "Luchs Logistik": {
+      "Standard": {
+        "shipments": 1159,
+        "resolved": 1151,
+        "on_time": 1052,
+        "late_or_lost": 99,
+        "not_known_yet": 8,
+        "on_time_pct": 91.4,
+        "transit_days": 3.71,
+        "cost_eur": 25.71,
+        "damaged": 14,
+        "delivered": 1147,
+        "damage_pct": 1.2
+      },
+      "Express": {
+        "shipments": 78,
+        "resolved": 78,
+        "on_time": 33,
+        "late_or_lost": 45,
+        "not_known_yet": 0,
+        "on_time_pct": 42.3,
+        "transit_days": 3.4,
+        "cost_eur": 42.11,
+        "damaged": 2,
+        "delivered": 78,
+        "damage_pct": 2.6
+      }
+    }
+  },
+  "monthly_on_time_pct": {
+    "Biber Freight": {
+      "1": 86.3,
+      "2": 85.5,
+      "3": 87.6,
+      "4": 86.0,
+      "5": 84.0,
+      "6": 81.7,
+      "7": 89.8,
+      "8": 85.5,
+      "9": 85.8,
+      "10": 84.4,
+      "11": 85.7,
+      "12": 80.9
+    },
+    "Falke Transport": {
+      "1": 94.0,
+      "2": 89.2,
+      "3": 87.4,
+      "4": 86.8,
+      "5": 91.9,
+      "6": 89.7,
+      "7": 93.5,
+      "8": 91.8,
+      "9": 89.9,
+      "10": 93.6,
+      "11": 92.6,
+      "12": 88.4
+    },
+    "Gams Cargo": {
+      "1": 94.4,
+      "2": 88.8,
+      "3": 88.5,
+      "4": 90.8,
+      "5": 91.0,
+      "6": 83.9,
+      "7": 87.2,
+      "8": 89.0,
+      "9": 88.9,
+      "10": 88.3,
+      "11": 87.4,
+      "12": 89.3
+    },
+    "Luchs Logistik": {
+      "1": 97.9,
+      "2": 90.1,
+      "3": 89.4,
+      "4": 93.4,
+      "5": 86.9,
+      "6": 94.4,
+      "7": 90.4,
+      "8": 86.9,
+      "9": 86.8,
+      "10": 90.4,
+      "11": 87.1,
+      "12": 64.0
+    }
+  },
+  "monthly_shipments": {
+    "1": 437,
+    "2": 437,
+    "3": 510,
+    "4": 455,
+    "5": 477,
+    "6": 476,
+    "7": 476,
+    "8": 355,
+    "9": 551,
+    "10": 663,
+    "11": 586,
+    "12": 495
+  },
+  "paradox": {
+    "overall": {
+      "Gams Cargo": 88.9,
+      "Falke Transport": 90.8
+    },
+    "countries": {
+      "AT": {
+        "Gams Cargo": 98.9,
+        "Falke Transport": 95.4,
+        "gams_resolved": 186,
+        "falke_resolved": 1322
+      },
+      "HU": {
+        "Gams Cargo": 88.5,
+        "Falke Transport": 76.5,
+        "gams_resolved": 288,
+        "falke_resolved": 98
+      },
+      "IT": {
+        "Gams Cargo": 85.1,
+        "Falke Transport": 69.9,
+        "gams_resolved": 429,
+        "falke_resolved": 133
+      },
+      "SI": {
+        "Gams Cargo": 88.4,
+        "Falke Transport": 82.7,
+        "gams_resolved": 215,
+        "falke_resolved": 75
+      }
+    },
+    "gams_share_in_hu_it_si_pct": 83.5,
+    "falke_share_in_at_pct": 65.9
+  },
+  "checks": {
+    "luchs_december_on_time_pct": 64.0,
+    "luchs_rest_of_year_on_time_pct": 90.1
+  }
+}

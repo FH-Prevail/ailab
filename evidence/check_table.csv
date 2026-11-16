@@ -1,0 +1,19 @@
+check,country,service,carrier,month,shipments,resolved,on_time,late_or_lost,not_known_yet,on_time_pct,transit_days,cost_eur,damaged,delivered,damage_pct
+"all carriers, whole year",,,,,5918,5881,5202,679,37,88.5,3.63,29.91,97,5847,1.7
+"Biber Freight, whole year",,,Biber Freight,,1532,1526,1300,226,6,85.2,3.68,25.62,54,1512,3.6
+"Falke Transport, whole year",,,Falke Transport,,2020,2008,1823,185,12,90.8,3.11,31.68,17,1997,0.9
+"Gams Cargo, whole year",,,Gams Cargo,,1129,1118,994,124,11,88.9,4.43,36.08,10,1113,0.9
+"Luchs Logistik, whole year",,,Luchs Logistik,,1237,1229,1085,144,8,88.3,3.69,26.74,16,1225,1.3
+"Italy, Biber Freight",IT,,Biber Freight,,180,180,135,45,0,75.0,5.49,31.58,3,180,1.7
+"Italy, Falke Transport",IT,,Falke Transport,,133,133,93,40,0,69.9,5.85,42.48,1,133,0.8
+"Italy, Gams Cargo",IT,,Gams Cargo,,433,429,365,64,4,85.1,5.11,40.08,6,425,1.4
+"Italy, Luchs Logistik",IT,,Luchs Logistik,,0,0,0,0,0,,,,0,0,
+"Italy Express, Biber Freight",IT,Express,Biber Freight,,37,37,26,11,0,70.3,3.24,44.72,0,37,0.0
+"Italy Express, Falke Transport",IT,Express,Falke Transport,,22,22,16,6,0,72.7,3.45,61.45,0,22,0.0
+"Italy Express, Gams Cargo",IT,Express,Gams Cargo,,86,86,76,10,0,88.4,2.73,59.8,1,85,1.2
+"Germany Standard, Biber Freight",DE,Standard,Biber Freight,,235,234,198,36,1,84.6,4.39,24.04,11,232,4.7
+"Germany Standard, Falke Transport",DE,Standard,Falke Transport,,267,266,233,33,1,87.6,4.22,31.05,4,262,1.5
+"Germany Standard, Luchs Logistik",DE,Standard,Luchs Logistik,,592,587,543,44,5,92.5,3.99,27.59,8,585,1.4
+"Czechia, Gams Cargo (no shipments)",CZ,,Gams Cargo,,0,0,0,0,0,,,,0,0,
+"Luchs Logistik, December",,,Luchs Logistik,12,94,86,55,31,8,64.0,4.41,25.49,1,85,1.2
+"Luchs Logistik Express, whole year",,Express,Luchs Logistik,,78,78,33,45,0,42.3,3.4,42.11,2,78,2.6

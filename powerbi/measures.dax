@@ -1,0 +1,17 @@
+// The six KPIs of the Carrier Scorecard as DAX measures on the table 'shipments'
+// (loaded from data/shipments_2025_clean.csv). The fallback if the agent cannot create them:
+// in Power BI Desktop, Modeling, New measure, paste one at a time.
+// on_time, transit_days and damaged are empty where they do not apply: COUNT and AVERAGE skip
+// empty cells, so they are never treated as 0.
+
+Shipments = COUNTROWS ( shipments )
+
+Known result = COUNT ( shipments[on_time] )
+
+On time % = DIVIDE ( SUM ( shipments[on_time] ), COUNT ( shipments[on_time] ) )            // format 0.0%
+
+Transit days = AVERAGE ( shipments[transit_days] )                                           // format 0.00
+
+Cost per shipment € = AVERAGE ( shipments[cost_eur] )                                        // format 0.00
+
+Damaged % = DIVIDE ( SUM ( shipments[damaged] ), COUNT ( shipments[damaged] ) )             // format 0.0%
