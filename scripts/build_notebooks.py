@@ -1319,7 +1319,7 @@ print(shipments_server.carrier_scorecard(country="IT")["carriers"][0])
     md('''
 ## 3 · Read what a model did (no key needed)
 
-Three real recordings (traces: every step of one run). A small model (Claude Haiku) used exactly this server. The host was Claude Code, and it allowed only the four tools.
+**What a recording is.** Before class, I asked a small model (Claude Haiku) three questions, with exactly this server as its tools. The host was Claude Code, and it allowed only the four tools. For each question, every step was saved in a file: the question, each tool call with its inputs, the result that the server sent back, and the final answer. Such a saved run is a *recording*, also called a *trace*. The cells below only show these files: no AI runs now, so you need no key, and everybody sees the same run.
 
 **Do this, for each of the three traces:**
 
