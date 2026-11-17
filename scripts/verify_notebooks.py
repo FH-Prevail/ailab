@@ -69,12 +69,11 @@ EXTRA = {  # cells run after a notebook, not saved: they check what the notebook
 
 
 def windows_ready(nb):
-    """Colab runs Linux, where the Jupyter kernel's stderr has a file handle. On Windows it has none, and the MCP client
-    passes sys.stderr to the server process that notebook 3 starts (UnsupportedOperation: fileno). On Windows, put one
-    line in front of the notebook that gives stderr a handle: in memory only, the saved notebooks stay as they are."""
-    if sys.platform == "win32":
-        nb.cells.insert(0, nbformat.v4.new_code_cell(
-            "import sys\nsys.stderr.fileno = sys.__stderr__.fileno   # added on Windows by the verifier"))
+    """Runs the notebook as it is, on every system. Until 17 November 2026 this put a line in front of the notebook on
+    Windows that gave the kernel's stderr a file handle: the MCP client passes its errlog (by default sys.stderr) to the
+    server process, and a kernel without a handle fails with UnsupportedOperation: fileno. Colab now has such a kernel
+    too (Python 3.13, newer ipykernel), so notebook 3 itself sends the server's messages to a file (errlog=SERVER_LOG),
+    and the verifier must not hide the problem any more."""
     return nb
 
 

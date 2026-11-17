@@ -843,6 +843,8 @@ from pathlib import Path
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "streamlit==1.67.0"], check=True)
 from streamlit.testing.v1 import AppTest
 import logging
+import urllib.request
+urllib.request.urlretrieve("{RAW}/app/app.py", "reference_app.py")   # our reference app, for the cell after this one
 
 EXPECTED = {test_cells_src()}
 
@@ -891,16 +893,12 @@ def test_my_app(path="app.py"):
 test_my_app()
 '''),
     md('''
-**Goal:** your own app does not work yet? Test our reference app instead. Run the closed cell below (click its ▶ play button). Then click **+ Code**, type `test_my_app('reference_app.py')`, and run it.
+**Goal:** your own app does not work yet? Test our reference app instead. First run the test cell above (if it says that `app.py` has no code yet, that is fine). Then run the cell below.
 '''),
-    code(f'''
-#@title Our reference app: run this cell to save it as reference_app.py for the test
-import urllib.request
-urllib.request.urlretrieve("{RAW}/app/app.py", "reference_app.py")
-print(open("reference_app.py", encoding="utf-8").read()[:1500], "...")
-print("Saved as reference_app.py; test it with: test_my_app('reference_app.py')")
-# CHECK: Saved as reference_app.py
-''', form=True),
+    code('''
+test_my_app("reference_app.py")   # our reference app
+# CHECK: 6 of 6 checks passed
+'''),
     md('''
 ## 5 · Change one thing
 
@@ -1011,6 +1009,7 @@ from google.genai import types
 from mcp import ClientSession, StdioServerParameters, stdio_client
 
 SERVER = StdioServerParameters(command=sys.executable, args=["shipments_server.py"])
+SERVER_LOG = open("server_log.txt", "a", encoding="utf-8")   # the server's own messages go to this file: Colab cannot pass its output to another program
 SYSTEM = "You help the logistics team of a spare-parts distributor compare carriers. Take every number from the tools."  # EDIT
 
 def declaration(tool):
@@ -1038,7 +1037,7 @@ async def ask(question, system=SYSTEM, max_steps=16):
     if not MODEL:
         print("No Gemini model yet: run the key cell above first (it needs the secret GEMINI_API_KEY).")
         return None
-    async with stdio_client(SERVER) as (read, write):
+    async with stdio_client(SERVER, errlog=SERVER_LOG) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
             tools = (await session.list_tools()).tools                       # 1. ask the server for its tools
@@ -1180,7 +1179,9 @@ One question, step by step. The host delivers every message. The model never tou
 
 {figure("tool_call", "Eight messages between host, model and MCP server: 1 the host asks the server for its tools, 2 the server sends four tools with name, description and inputs, 3 the host sends your question and the descriptions to the model, 4 the model asks to call carrier_scorecard for Italy, 5 the host runs it on the server, 6 the server sends the result, 7 the host gives the result to the model, 8 the model writes the answer in words.")}
 
-Steps 1 and 2 happen once, at the start. Steps 3 to 8 happen for your question. The model can ask for several tools, one after the other. In section 4, the function `ask()` is this host, in about 30 lines of Python.
+Steps 1 and 2 happen once, at the start. Steps 3 to 8 happen for your question. The model can ask for several tools, one after the other.
+
+**The host is the app where you type your question.** It is not the AI itself: it carries the messages between you, the model and the server. In the live demo below, the host is Claude Code. In section 4, it is the closed cell **The host** in this notebook: about 30 lines of Python. Other hosts are the ChatGPT app, Claude Desktop, VS Code with Copilot and LM Studio.
 
 > **The server calculates. The model chooses the tool and reads the result: it can still misread a correct result.**
 '''),
@@ -1271,16 +1272,17 @@ An MCP server tells the host which tools it has: a **name**, a **description** i
 from mcp import ClientSession, StdioServerParameters, stdio_client
 
 SERVER = StdioServerParameters(command=sys.executable, args=["shipments_server.py"])
+SERVER_LOG = open("server_log.txt", "a", encoding="utf-8")   # the server's own messages go to this file: Colab cannot pass its output to another program
 
 async def call(tool, **arguments):
     """Call one tool on the server yourself, without any AI."""
-    async with stdio_client(SERVER) as (read, write):
+    async with stdio_client(SERVER, errlog=SERVER_LOG) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
             return as_text(await session.call_tool(tool, arguments))
 
 async def list_tools():
-    async with stdio_client(SERVER) as (read, write):
+    async with stdio_client(SERVER, errlog=SERVER_LOG) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
             return (await session.list_tools()).tools
