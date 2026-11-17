@@ -37,10 +37,33 @@ from nbclient import NotebookClient
 ROOT = Path(__file__).resolve().parents[1]
 RAW = "https://raw.githubusercontent.com/FH-Prevail/ailab/main"
 NOTEBOOKS = ["1_ask_your_data.ipynb", "2_build_the_app.ipynb", "3_give_the_ai_tools.ipynb"]
+TEXT_APP = '''
+# An app that shows its numbers as text ("85.1%", "1,234"), as AI-written apps often do: the test must still read them.
+import pandas as pd
+import streamlit as st
+data = pd.read_csv(DATA)
+country = st.sidebar.selectbox("Destination country", ["All countries", "AT", "DE", "CZ", "HU", "IT", "SI"])
+service = st.sidebar.radio("Service", ["All services", "Standard", "Express"])
+first, last = st.sidebar.select_slider("Months", options=list(range(1, 13)), value=(1, 12))
+d = data[data["month"].between(first, last)]
+if country != "All countries":
+    d = d[d["country"] == country]
+if service != "All services":
+    d = d[d["service"] == service]
+t = d.groupby("carrier").agg(**{"Known result": ("on_time", "count"), "On time %": ("on_time", "mean"),
+                                "Damaged %": ("damaged", "mean")})
+t["Known result"] = t["Known result"].map("{:,}".format)
+t["On time %"] = (t["On time %"] * 100).map("{:.1f}%".format)
+t["Damaged %"] = (t["Damaged %"] * 100).map("{:.1f} %".format)
+st.dataframe(t.reset_index(), hide_index=True)
+'''
 EXTRA = {  # cells run after a notebook, not saved: they check what the notebook only offers
     "2_build_the_app.ipynb": [
         "import urllib.request\nurllib.request.urlretrieve(RAW_URL + '/app/buggy_app.py', 'buggy_app.py')\n"
-        "print('REFERENCE'); test_my_app('reference_app.py')\nprint('BUGGY'); test_my_app('buggy_app.py')",
+        f"TEXT_APP = {TEXT_APP!r}\n"
+        "open('text_app.py', 'w', encoding='utf-8').write(TEXT_APP.replace('DATA', repr(RAW_URL + '/data/shipments_2025_clean.csv')))\n"
+        "print('REFERENCE'); test_my_app('reference_app.py')\nprint('BUGGY'); test_my_app('buggy_app.py')\n"
+        "print('TEXT APP'); test_my_app('text_app.py')",
     ],
 }
 
@@ -242,13 +265,17 @@ def run(name: str, base: str, env: dict) -> list[str]:
         problems += [f"cell {i}: {p}" for p in check_cell(cell)]
     if name == "2_build_the_app.ipynb":
         text = output_text(nb.cells[original])
-        ref, _, bug = text.partition("BUGGY")
+        ref, _, rest = text.partition("BUGGY")
+        bug, _, as_text = rest.partition("TEXT APP")
         if "6 of 6 checks passed" not in ref:
             problems.append("reference app does not pass the six app checks:\n" + ref[-800:])
+        if "6 of 6 checks passed" not in as_text:
+            problems.append("an app that shows its numbers as text (\"85.1%\") is not read:\n" + as_text[-800:])
         if "6 of 6 checks passed" in bug or "OFF" not in bug:
             problems.append("the app with one wrong line is not caught:\n" + bug[-800:])
         else:
-            print("   reference app 6 of 6; app with one wrong line:", bug.count("OFF "), "checks off")
+            print("   reference app 6 of 6; app with one wrong line:", bug.count("OFF "), "checks off;",
+                  "app with numbers as text (\"85.1%\"): 6 of 6" if "6 of 6 checks passed" in as_text else "")
     if name == "3_give_the_ai_tools.ipynb":
         live = [output_text(c) for c in nb.cells if "live" in c.metadata.get("tags", [])]
         asked = [t for t in live if "QUESTION:" in t]
