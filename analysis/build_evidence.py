@@ -1,6 +1,6 @@
 """Freeze every number the session shows into evidence/results.json.
 
-The slides, the # CHECK lines in the notebooks, the README, the app test, the MCP
+The notebooks (text, pictures and # CHECK lines), the README, the app test, the MCP
 test and the Power BI check all read the files this script writes, so they show
 exactly what the data says. Nothing is typed in by hand.
 
@@ -223,7 +223,7 @@ def check_rows(df: pd.DataFrame) -> list[dict]:
 
 # ---------------------------------------------------------------- the findings the session teaches
 def assert_findings(r: dict) -> list[str]:
-    """Stop the build if the data no longer shows what the slides say."""
+    """Stop the build if the data no longer shows what the notebooks say."""
     failed = []
 
     def need(ok: bool, what: str) -> None:

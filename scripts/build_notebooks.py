@@ -2,6 +2,10 @@
 """build_notebooks.py - the three Colab notebooks of the AI Lab session on vibe analytics,
 vibe coding and MCP.
 
+There is no slide deck: each notebook holds what the lecturer shows on the screen (parts without
+a number), the tasks (numbered sections) and what the class looks at afterwards ("Look back"
+blocks). The pictures come from scripts/build_figures.py (figures/ on the course page).
+
 Every notebook is written from the cell lists below. Numbers in the text and in the # CHECK
 lines are placeholders «path.to.value» filled from evidence/results.json, so they always
 match what the data says. scripts/verify_notebooks.py runs the finished notebooks like Colab
@@ -41,10 +45,15 @@ def code(text, form=False, live=False):
     return {"type": "code", "src": text.strip("\n"), "form": form, "live": live}
 
 
-def value(path):
+def lookup(path):
     node = EVIDENCE
     for key in path.split("."):
         node = node[int(key)] if isinstance(node, list) else node[key]
+    return node
+
+
+def value(path):
+    node = lookup(path)
     if isinstance(node, bool) or not isinstance(node, (int, float)):
         return str(node)
     if isinstance(node, int):
@@ -53,16 +62,48 @@ def value(path):
 
 
 def fill(text):
-    return re.sub(r"«([^»]+)»", lambda m: value(m.group(1)), text)
+    """«path» gives the value in its usual form; «path:.2f» gives it in exactly that form (here: two decimals)."""
+    def one(m):
+        path, _, form = m.group(1).partition(":")
+        return format(lookup(path), form) if form else value(path)
+    return re.sub(r"«([^»]+)»", one, text)
 
 
 SAVE_COPY = ('**Save your own copy.** Sign in with your Google account (top right). Then choose **File, Save a copy in '
              'Drive**. A new tab opens ("Copy of ..."). Work only in that tab.')
 PAIRS = "**Work in pairs on one laptop.** One person types, the other checks the numbers. Change roles after each section."
 
+# There is no slide deck: each notebook holds what I show on the screen, the tasks, and what we look at afterwards.
+HOW_TO_READ = """**How to read this notebook.** There are no slides: everything is here, from top to bottom.
 
-def header(n, intro, start):
-    """The first cell of a notebook: the title, the story (intro) and what to do before the first task (start)."""
+- **Parts without a number:** I show them on the screen. You listen and read along.
+- **Sections with a number:** your tasks. You work in pairs.
+{look_back}"""
+LOOK_BACK = "- **Look back:** closed blocks that open on a click. Open them after the task. We also look at them together."
+
+
+def figure(name, alt, width=820):
+    """A picture from the course page (figures/ on GitHub, made by scripts/build_figures.py)."""
+    return f'<img src="{RAW}/figures/{name}.png" alt="{alt}" width="{width}">'
+
+
+def recorded(path, pattern, what):
+    """A number quoted from a recorded AI answer; stops the build if the recording no longer says it."""
+    text = json.loads((ROOT / path).read_text(encoding="utf-8"))["quick_question"]["answer"]
+    m = re.search(pattern, text, re.S)
+    if not m:
+        raise SystemExit(f"{path} no longer contains {what}")
+    return m.group(1)
+
+
+def long_date(iso):
+    import datetime
+    d = datetime.date.fromisoformat(iso)
+    return f"{d.day} {d.strftime('%B')} {d.year}"
+
+
+def header(n, intro, look_back=True):
+    """The first cell of a notebook: the title, what the notebook is, and how to read it."""
     return md(f"""
 # {TITLES[n]}
 
@@ -72,7 +113,7 @@ def header(n, intro, start):
 
 {intro.strip()}
 
-{start.strip()}
+{HOW_TO_READ.format(look_back=LOOK_BACK if look_back else "").strip()}
 
 The data is not real (it is synthetic): we invented the company and its carriers. Share only course data with AI tools, never company data.
 """)
@@ -98,19 +139,71 @@ WORDS = "| Word | Meaning |\n|---|---|\n" + "\n".join(f"| {word} | {meaning} |" 
 WORDS_BULLETS = "\n".join(f"- {word}: {meaning}" for word, meaning in WORD_LIST)
 
 # ============================================================================================ notebook 1
+HAIKU_FALKE = recorded("evidence/simulations/analytics_claude-haiku-5-5.json",
+                       r"Falke Transport\*\*\s*\|[^|]*\|\s*\*\*([\d.]+)%", "Haiku's Falke rate")
+GPT_FALKE = recorded("evidence/simulations/analytics_gpt-6-astra.json",
+                     r"([\d.]+)% of shipments arrived on time", "GPT's Falke rate")
+RECORDED_ON = long_date(json.loads((ROOT / "evidence/simulations/analytics_claude-haiku-5-5.json")
+                                   .read_text(encoding="utf-8"))["recorded"])
+
 NB1 = [
     header(1, """
-**Block 1, about 20 minutes.** You are the logistics analyst of a company in Upper Austria that sells spare parts. The company must sign new contracts with its carriers (delivery companies) for 2027. The head of logistics asks:
+**Block 1 of the session, about 40 minutes.** You answer a business question from one data file. An AI writes the code. Your job: say exactly what you mean, check what the AI did, and decide what the numbers really show.
+
+Course page: [github.com/FH-Prevail/ailab](https://github.com/FH-Prevail/ailab)
+"""),
+    md('''
+## Today
+
+**One case, three steps.** Each step ends with something that works.
+
+1. **Ask** (vibe analytics, this notebook): you answer a business question from one file, and you check the answer.
+2. **Build** (vibe coding, notebook 2): you build an app from the answer without writing code, and you test it.
+3. **Connect** (MCP, notebook 3): you give an AI tools, and you check what it did with them.
+
+> **The AI writes the code. You decide what the words mean, and you check the result.**
+
+**About me.** I am Sina Mirshahi, a researcher at Logistikum, FH OÖ, here in Steyr. I work on applied AI with industry partners: demand forecasting, computer vision, and AI assistants that answer from company documents. I use the tools of today every week: chat AIs for analysis, AI coding tools such as Claude Code and Codex, and MCP servers.
+'''),
+    md('''
+## Our case: carrier contracts
+
+You are the logistics analyst of a company in Upper Austria that sells spare parts. The company is invented. It has warehouses in Linz and Wels, and it must sign new contracts with its carriers (delivery companies) for 2027. The head of logistics asks:
 
 > **For each country, which delivery company (carrier) should we use? And when is the faster, more expensive Express service worth its price?**
 
-You have one export (a file from the company's system) with every shipment of 2025. Your AI writes the code. Your job: say exactly what you mean, check what the AI did, and decide what the numbers really show.
-""", f"""
-**Before you start**
+- **Four carriers:** Biber Freight, Falke Transport, Gams Cargo, Luchs Logistik.
+- **Six countries:** Austria, Germany, Czechia, Hungary, Italy, Slovenia.
+- **One export** (a file from the company's system): every shipment of 2025, «data.rows» rows and 16 columns: the dates promised and delivered, carrier, service, country, weight, cost, damage.
+- **You:** the analyst, with an AI and two hours.
+
+Never paste company data into an AI tool that your company has not approved.
+'''),
+    md(f'''
+## Vibe analytics in one picture
+
+**Vibe analytics** means: you ask in plain words, the AI writes the code, and you run and check it. The name comes from "vibe coding" (notebook 2). Another name is "conversational analytics".
+
+{figure("vibe_analytics", "Your question in plain words, then the AI writes code in your AI chat, then the code runs on your data in Colab, then an answer: a table or a chart")}
+
+**Your three jobs.** The AI writes the code. These three jobs stay with you:
+
+1. **Define:** write down what "on time" and "reliable" mean. Ask yourself: what about lost shipments, shipments still on their way, repeated rows?
+2. **Check:** look at the data first, and ask for code, counts and evidence. Ask yourself: did the AI show it, or only claim it?
+3. **Decide:** say what the numbers show, and what they do not show. Ask yourself: do we compare within each country?
+
+> **Asking is fast. Checking is your job.**
+
+**Watch first.** I show the start of this notebook on the screen: "Start here" and section 1. Then it is your turn.
+'''),
+    md(f"""
+## Before you start
 
 1. {SAVE_COPY}
 2. {PAIRS}
 3. **Open your AI chat.** Use the AI assistant you know (ChatGPT, Gemini, Claude or Copilot) in a second browser tab. If you have none, click the **Gemini** button in Colab: its panel is an AI chat too. Use this one chat for the whole notebook.
+
+**Your tasks:** "Start here", then sections 1 to 5. Section 6 is optional: do it only if you finish early.
 
 **How every task works**
 
@@ -146,6 +239,7 @@ if Path("data/shipments_2025.csv").exists():          # a copy next to the noteb
 raw = pd.read_csv(URL, parse_dates=["ship_date", "promised_date", "delivered_date"])   # the export: never changed
 df = raw.copy()                                                                         # the copy you and your AI work on
 print(f"Ready: {{len(df):,}} rows, {{df.shape[1]}} columns, ship dates {{df['ship_date'].min():%Y-%m-%d}} to {{df['ship_date'].max():%Y-%m-%d}}")
+print("The first five rows of the table:")
 df.head()
 # CHECK: Ready: «data.rows» rows, 16 columns, ship dates «data.first_ship_date» to «data.last_ship_date»
 '''),
@@ -181,6 +275,27 @@ Which carrier in df is the most reliable?
     md('''
 **Your answer** (double-click here, write, press Shift + Enter): which carrier, which number, and how did your AI define "reliable"?
 '''),
+    md(f'''
+<details>
+<summary><b>Look back: same question, different answers (open this after you wrote your answer)</b></summary>
+
+Before class, I asked two AIs the quick question, with the same file. The last row is our own way of counting, which you meet in section 3.
+
+| Asked before class | Falke on time | What it decided without asking | Its answer |
+|---|---|---|---|
+| Claude Haiku 5.5 | {HAIKU_FALKE} % | removed repeated rows, merged names, did not count lost shipments | "Falke is the most reliable" |
+| GPT-6 Astra (Codex) | {GPT_FALKE} % | removed repeated rows, merged names, counted lost as late, did not count shipments in transit | "Falke leads overall, Gams on comparable routes" |
+| **Our metric contract** | **«overall.Falke Transport.on_time_pct» %** | lost counts as late; in transit after the promised day counts as late; the rest is not known yet | by country: section 4 |
+
+- The numbers are close, but the **decision** is different: "Falke" against "it depends on the country".
+- Your AI may have chosen differently again. **What did your AI decide for you?**
+
+> **Write your rules into the prompt, so the AI follows them.**
+
+*Recorded on {RECORDED_ON}, with Python and only shipments_2025.csv in the folder. The full answers are in [evidence/simulations](https://github.com/{REPO}/tree/main/evidence/simulations) on the course page.*
+
+</details>
+'''),
     md('''
 ## 2 · Check the data first
 
@@ -204,6 +319,7 @@ Do not fix anything yet.
     code('''
 #@title Our answer: four problems in the export (run it after you have tried)
 repeats = raw[raw.duplicated("shipment_id")]
+print("Four problems in the raw export, each with its evidence")
 print("1. Repeated rows:", len(repeats), "rows repeat a shipment_id;", (repeats["carrier"] == "Luchs Logistik").sum(), "of them are Luchs Logistik")
 print("2. Carrier names:", raw["carrier"].nunique(), "spellings for four carriers:", sorted(raw["carrier"].unique()))
 wels = raw[raw["warehouse"] == "Wels"]
@@ -217,6 +333,23 @@ print("4. No delivery date:", len(missing), "rows:", missing["status"].value_cou
 # CHECK: 3. Weight at Wels: median «data.wels_median_weight_before_sep» before September, «data.wels_median_weight_from_sep» from September
 # CHECK: 4. No delivery date: «data.raw_rows_without_delivery_date» rows: {'in_transit': «data.status_counts.in_transit», 'lost': «data.status_counts.lost»}
 ''', form=True),
+    md('''
+<details>
+<summary><b>Look back: why the four problems matter (open this after you ran "Our answer")</b></summary>
+
+| Problem | Evidence | Why it matters |
+|---|---|---|
+| Repeated rows | «data.duplicate_rows» rows repeat a shipment_id; «data.duplicate_rows_luchs» of them are Luchs Logistik | Luchs: «luchs_effect_of_rules.raw_missing_as_late» % on time; «luchs_effect_of_rules.repeats_removed_missing_as_late» % without the repeated rows; «luchs_effect_of_rules.clean» % with all our rules |
+| Six names, four carriers | "Biber Freight GmbH" («data.carrier_spelling_counts.Biber Freight GmbH» rows), "BIBER FREIGHT" («data.carrier_spelling_counts.BIBER FREIGHT» rows) | "BIBER FREIGHT" is second in a quick table |
+| Grams in a kg column | Wels from 1 September: the median weight «data.wels_median_weight_before_sep» becomes «data.wels_median_weight_from_sep:,.0f» | every weight, and every cost per kg |
+| No delivery date | «data.raw_rows_without_delivery_date» shipments: «data.status_counts.lost» lost, «data.status_counts.in_transit» in transit («data.overdue_in_transit» of them already overdue) | the on-time rate depends on what you do with them |
+
+When we asked Claude Haiku to check the data first, it found all four problems. It guessed the grams from the numbers alone: every value was a multiple of 100, and the weight no longer matched the cost. That is a guess, not a proof: only the warehouse can confirm it.
+
+> **Ask for evidence: what did your AI show, and what did it only suspect?**
+
+</details>
+'''),
     md('''
 ## 3 · Agree on a definition, then give your AI the rules
 
@@ -248,7 +381,15 @@ These are our company's rules for counting, the *metric contract*:
 
 «RULES»
 
-**Ask your AI.** The prompt below gives your AI rules 1 to 4, in exact words. (Rules 5 to 7 define transit days, damage and cost: you need them in section 5 and in the app.) It is a good prompt. Your first message gave the **context**. This prompt adds the **rules**, the **question**, the **output** you want, and a request for **proof**.
+**Ask your AI.** The prompt below gives your AI rules 1 to 4, in exact words. (Rules 5 to 7 define transit days, damage and cost: you need them in section 6 and in the app.)
+
+A prompt that works has five parts:
+
+1. **Context:** what the table is. Your first message gave it.
+2. **Rules:** the metric contract, in order.
+3. **Question:** the on-time rate per carrier.
+4. **Output:** a table with counts and %.
+5. **Proof:** the code, and the number of rows after each rule.
 
 ```
 Apply these rules to df, in this order. Print the number of rows after each rule:
@@ -279,12 +420,16 @@ overdue = (clean["status"] == "in_transit") & (clean["promised_date"] <= EXPORT)
 clean["known"] = delivered | (clean["status"] == "lost") | overdue                                  # rule 4
 clean["on_time"] = (delivered & (clean["delivered_date"] <= clean["promised_date"])).astype("Int64").where(clean["known"])
 # on_time: 1 on time, 0 late or lost, empty = not known yet (the same as in the cleaned table)
+print("What the rules leave:")
 print(f"{len(raw):,} rows -> {len(clean):,} shipments -> {clean['known'].sum():,} with a known result")
 
 known = clean[clean["known"]]
-table = known.groupby("carrier").agg(known=("on_time", "size"), on_time=("on_time", "sum"))
-table["on_time_pct"] = (table["on_time"] / table["known"] * 100).round(1)
-print(table.sort_values("on_time_pct", ascending=False))
+table = known.groupby("carrier").agg(**{"Known result": ("on_time", "size"), "On time": ("on_time", "sum")})
+table["On time %"] = (table["On time"] / table["Known result"] * 100).round(1)
+print()
+print("On time per carrier, with the metric contract")
+print("(Known result = shipments where we know the result; On time = how many of them were on time)")
+print(table.sort_values("On time %", ascending=False).to_string())
 # CHECK: «data.rows» rows -> «data.shipments» shipments -> «data.resolved» with a known result
 # CHECK: Falke Transport «overall.Falke Transport.on_time_pct», Gams Cargo «overall.Gams Cargo.on_time_pct», Luchs Logistik «overall.Luchs Logistik.on_time_pct», Biber Freight «overall.Biber Freight.on_time_pct»
 ''', form=True),
@@ -298,7 +443,9 @@ Run the closed cell below. It shows one quick way to answer: no cleaning, and a 
     code('''
 #@title The quick answer, without the rules
 quick = (raw["delivered_date"] <= raw["promised_date"]).groupby(raw["carrier"]).mean() * 100
-print(quick.round(1).sort_values(ascending=False))
+print("The quick answer: on time % for each carrier name in the raw export")
+print("(no cleaning; a shipment without a delivery date counts as late)")
+print(quick.round(1).sort_values(ascending=False).to_string())
 # CHECK: Falke Transport «lazy.on_time_pct_missing_as_late.Falke Transport», BIBER FREIGHT «lazy.on_time_pct_missing_as_late.BIBER FREIGHT», Luchs Logistik «lazy.on_time_pct_missing_as_late.Luchs Logistik»
 ''', form=True),
     md('''
@@ -317,7 +464,9 @@ clean = pd.read_csv("{RAW}/data/shipments_2025_clean.csv", parse_dates=["ship_da
 clean["known"] = clean["on_time"].notna()             # on_time: 1 on time, 0 late or lost, empty = not known yet
 known = clean[clean["known"]].copy()
 delivered = clean["status"].eq("delivered")
-print((known.groupby("carrier")["on_time"].mean() * 100).round(1))
+print(f"The cleaned table is loaded: {{len(clean):,}} shipments, {{len(known):,}} of them with a known result.")
+print("On time % per carrier (the same numbers as in 'Our answer' of section 3b):")
+print((known.groupby("carrier")["on_time"].mean() * 100).round(1).to_string())
 # CHECK: Biber Freight «overall.Biber Freight.on_time_pct», Falke Transport «overall.Falke Transport.on_time_pct», Gams Cargo «overall.Gams Cargo.on_time_pct», Luchs Logistik «overall.Luchs Logistik.on_time_pct»
 '''),
     md('''
@@ -342,19 +491,62 @@ reliable than Falke Transport?
 #@title Our answer: carrier by country (run it after you have tried)
 rate = known.pivot_table(index="country", columns="carrier", values="on_time", aggfunc="mean") * 100
 count = known.pivot_table(index="country", columns="carrier", values="on_time", aggfunc="size")
-print(rate.round(1))
-print(count)
-print("Share of each carrier's shipments that go to Hungary, Italy or Slovenia:")
-print((clean.groupby("carrier")["country"].apply(lambda c: c.isin(["HU", "IT", "SI"]).mean()) * 100).round(1))
+share = clean.groupby("carrier")["country"].apply(lambda c: c.isin(["HU", "IT", "SI"]).mean()) * 100
+print("TABLE 1. On time %, for each country and carrier ('none' = this carrier had no shipments there)")
+print(rate.round(1).to_string(na_rep="none"))
+print()
+print("TABLE 2. The number of shipments behind each % of table 1 (these are counts, not %)")
+print(count.fillna(0).astype(int).to_string())
+print()
+print("TABLE 3. The share of each carrier's shipments that go to Hungary, Italy or Slovenia, in %")
+print(share.round(1).to_string())
+
+# The chart: Falke Transport and Gams Cargo, overall and within each country
+import matplotlib.pyplot as plt
+overall = (known.groupby("carrier")["on_time"].mean() * 100).to_frame("Overall").T
+chart = pd.concat([overall, rate])[["Falke Transport", "Gams Cargo"]]
+ax = chart.plot.bar(color=["#E66A1F", "#1B9E5A"], figsize=(10, 3.6), rot=0, width=0.8)
+ax.set_ylabel("On time %")
+ax.set_ylim(0, 125)
+ax.set_yticks(range(0, 101, 20))
+ax.legend(title=None, ncols=2, loc="upper right")
+ax.set_title("Gams Cargo is behind overall, but ahead in every country where both had shipments")
+for bars, carrier in zip(ax.containers, chart.columns):   # no bar and no number where a carrier had no shipments
+    ax.bar_label(bars, labels=[f"{v:.1f}" if pd.notna(v) else "" for v in chart[carrier]], fontsize=9)
+plt.show()
 # CHECK: AT: Gams «paradox.countries.AT.Gams Cargo», Falke «paradox.countries.AT.Falke Transport»; HU: Gams «paradox.countries.HU.Gams Cargo», Falke «paradox.countries.HU.Falke Transport»
 # CHECK: IT: Gams «paradox.countries.IT.Gams Cargo», Falke «paradox.countries.IT.Falke Transport»; SI: Gams «paradox.countries.SI.Gams Cargo», Falke «paradox.countries.SI.Falke Transport»
 # CHECK: Gams Cargo «paradox.gams_share_in_hu_it_si_pct»
 ''', form=True),
     md('''
-Gams Cargo is better than Falke Transport **in every country where both had shipments in 2025**. But overall, Gams is behind («paradox.overall.Gams Cargo» % against «paradox.overall.Falke Transport» %). Why? «paradox.gams_share_in_hu_it_si_pct» % of Gams shipments go to Hungary, Italy and Slovenia. These are long routes, and every carrier is late more often there. «paradox.falke_share_in_at_pct» % of Falke shipments stay in Austria. An overall average mixes the carrier with its routes. *A number can be correct and still answer the wrong question.*
+**How to read the output.** The cell prints three tables and a chart.
+
+- **Table 1** is the on-time rate in %. Example: in Italy (IT), Gams Cargo was on time for «by_country.IT.Gams Cargo.on_time_pct» % of its shipments.
+- **Table 2** is not a percentage. It shows how many shipments are behind each number of table 1. Example: the «by_country.IT.Gams Cargo.on_time_pct» % of Gams Cargo in Italy come from «by_country.IT.Gams Cargo.resolved» shipments. A rate from only a few shipments is less certain.
+- **Table 3** shows how much of each carrier's work goes to the three countries with long routes.
+- **The chart** shows Falke Transport and Gams Cargo next to each other: first overall, then for each country.
+- The word *none* means: this carrier had no shipments to that country in 2025.
+
+Gams Cargo is better than Falke Transport **in every country where both had shipments in 2025**. But overall, Gams is behind («paradox.overall.Gams Cargo» % against «paradox.overall.Falke Transport» %). Why? «paradox.gams_share_in_hu_it_si_pct» % of Gams shipments go to Hungary, Italy and Slovenia. These are long routes, and every carrier is late more often there. «paradox.falke_share_in_at_pct» % of Falke shipments stay in Austria. An overall average mixes the carrier with its routes.
+
+> **A number can be correct and still answer the wrong question.**
 '''),
     md('''
-## 5 · If you have time: Express, December, damage
+## 5 · Your answer for the head of logistics
+
+Write three sentences:
+
+1. Your **recommendation**: which carrier for which country.
+2. The **number** that supports it: the on-time % and the number of shipments behind it, for example Gams Cargo in Italy: «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
+3. **One limitation**, for example: these are observations from 2025, not proof for 2027; some groups have only a few shipments; or what else you want to know before you sign a contract.
+'''),
+    md('''
+**Your answer** (double-click here, write, press Shift + Enter):
+'''),
+    md('''
+## 6 · Optional: Express, December, damage
+
+This section is optional. Do it only if you finished section 5 and there is time left. If not, skip it: we open its **Look back** block together.
 
 Choose one question. **Ask your AI.**
 
@@ -373,18 +565,53 @@ shipments? Show damaged shipments as a share of delivered shipments, with the
 counts.
 ```
 
-**Run its code** in the cell below: paste it below the last line, then press **Shift + Enter**. Then run the closed cell **Our answers** under it (click its ▶ play button) and compare.
+**Run its code** in the cell below: paste it below the last line, then press **Shift + Enter**. Then run the closed cell **Our answers** under it (click its ▶ play button) and compare. It prints five small tables, each with a title, and two charts.
 '''),
     code("df = clean.copy()   # keep this line: it makes df the cleaned table\n# paste the AI's code below this line\n"),
     code('''
 #@title Our answers (run it after you have tried)
+import matplotlib.pyplot as plt
 d = clean[delivered].assign(transit=lambda x: (x["delivered_date"] - x["ship_date"]).dt.days)
-express = known.groupby(["carrier", "service"])["on_time"].mean().unstack() * 100
-print("On time %:\\n", express.round(1))
-print("Transit days:\\n", d.groupby(["carrier", "service"])["transit"].mean().unstack().round(2))
-print("Cost per shipment:\\n", clean.groupby(["carrier", "service"])["cost_eur"].mean().unstack().round(2))
-print("December on time %:", (known[known["ship_date"].dt.month == 12].groupby("carrier")["on_time"].mean() * 100).round(1).to_dict())
-print("Damaged %:", (d.groupby("carrier")["damaged"].mean() * 100).round(1).to_dict())
+both = ["Standard", "Express"]
+express = (known.groupby(["carrier", "service"])["on_time"].mean().unstack() * 100)[both]
+monthly = known.assign(month=known["ship_date"].dt.month).groupby(["month", "carrier"])["on_time"].mean().unstack() * 100
+
+print("QUESTION 1: Standard and Express")
+print("Table 1. On time %")
+print(express.round(1).to_string())
+print()
+print("Table 2. Average transit days (delivered shipments only)")
+print(d.groupby(["carrier", "service"])["transit"].mean().unstack()[both].round(2).to_string())
+print()
+print("Table 3. Average cost per shipment, in euro")
+print(clean.groupby(["carrier", "service"])["cost_eur"].mean().unstack()[both].round(2).to_string())
+print()
+print("QUESTION 2: the months")
+print("Table 4. On time % of the shipments of December (the chart on the right shows every month)")
+print(monthly.loc[12].round(1).to_string())
+print()
+print("QUESTION 3: damage")
+print("Table 5. Damaged shipments, in % of the delivered shipments")
+print((d.groupby("carrier")["damaged"].mean() * 100).round(1).to_string())
+
+# Two charts: Standard and Express (left), every month (right)
+colours = {"Biber Freight": "#0B5CAD", "Falke Transport": "#E66A1F", "Gams Cargo": "#1B9E5A", "Luchs Logistik": "#D04F95"}
+fig, (left, right) = plt.subplots(1, 2, figsize=(13, 3.8))
+express.plot.bar(ax=left, color=["#A6A6A6", "#004B96"], rot=0, width=0.8)
+left.set_title("On time %: Standard and Express")
+left.set_xlabel("")
+left.set_ylim(0, 125)
+left.set_yticks(range(0, 101, 20))
+left.legend(title=None, ncols=2, loc="upper right")
+for bars, service in zip(left.containers, express.columns):
+    left.bar_label(bars, labels=[f"{v:.1f}" for v in express[service]], fontsize=9)
+monthly.plot(ax=right, color=[colours[c] for c in monthly.columns], marker="o", markersize=3)
+right.set_title("On time % for each month of 2025")
+right.set_xlabel("Month (1 = January, 12 = December)")
+right.set_xticks(range(1, 13))
+right.legend(title=None, fontsize=8, loc="lower left")
+plt.tight_layout()
+plt.show()
 # CHECK: Luchs Logistik Express «express.Luchs Logistik.Express.on_time_pct», Standard «express.Luchs Logistik.Standard.on_time_pct»
 # CHECK: Luchs Logistik transit Express «express.Luchs Logistik.Express.transit_days», Standard «express.Luchs Logistik.Standard.transit_days»
 # CHECK: Luchs Logistik cost Express «express.Luchs Logistik.Express.cost_eur», Standard «express.Luchs Logistik.Standard.cost_eur»
@@ -392,20 +619,36 @@ print("Damaged %:", (d.groupby("carrier")["damaged"].mean() * 100).round(1).to_d
 # CHECK: Damaged Biber Freight «overall.Biber Freight.damage_pct»
 ''', form=True),
     md('''
-## 6 · Your answer for the head of logistics
+<details>
+<summary><b>Look back: when is Express worth its price? (open this after you tried, or if you skipped this section)</b></summary>
 
-Write three sentences:
+This answers the second half of our question. In each cell, the first number is Standard and the second is Express.
 
-1. Your **recommendation**: which carrier for which country.
-2. The **number** that supports it: the on-time % and the number of shipments behind it, for example Gams Cargo in Italy: «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
-3. **One limitation**, for example: these are observations from 2025, not proof for 2027; some groups have only a few shipments; or what else you want to know before you sign a contract.
+| Carrier | Transit days | Cost per shipment | On time |
+|---|---|---|---|
+| Falke Transport | «express.Falke Transport.Standard.transit_days:.2f» / «express.Falke Transport.Express.transit_days:.2f» | «express.Falke Transport.Standard.cost_eur:.2f» € / «express.Falke Transport.Express.cost_eur:.2f» € | «express.Falke Transport.Standard.on_time_pct:.1f» % / «express.Falke Transport.Express.on_time_pct:.1f» % |
+| Biber Freight | «express.Biber Freight.Standard.transit_days:.2f» / «express.Biber Freight.Express.transit_days:.2f» | «express.Biber Freight.Standard.cost_eur:.2f» € / «express.Biber Freight.Express.cost_eur:.2f» € | «express.Biber Freight.Standard.on_time_pct:.1f» % / «express.Biber Freight.Express.on_time_pct:.1f» % |
+| Gams Cargo | «express.Gams Cargo.Standard.transit_days:.2f» / «express.Gams Cargo.Express.transit_days:.2f» | «express.Gams Cargo.Standard.cost_eur:.2f» € / «express.Gams Cargo.Express.cost_eur:.2f» € | «express.Gams Cargo.Standard.on_time_pct:.1f» % / «express.Gams Cargo.Express.on_time_pct:.1f» % |
+| Luchs Logistik | «express.Luchs Logistik.Standard.transit_days:.2f» / «express.Luchs Logistik.Express.transit_days:.2f» | «express.Luchs Logistik.Standard.cost_eur:.2f» € / «express.Luchs Logistik.Express.cost_eur:.2f» € | «express.Luchs Logistik.Standard.on_time_pct:.1f» % / «express.Luchs Logistik.Express.on_time_pct:.1f» % |
+
+- **Falke Transport, Biber Freight, Gams Cargo:** Express is faster, and it costs more. You pay for speed, and you get it.
+- **Luchs Logistik:** Express costs more, but it saves almost no time. Only «express.Luchs Logistik.Express.on_time» of its «express.Luchs Logistik.Express.resolved» Express shipments were on time («express.Luchs Logistik.Express.on_time_pct:.1f» %). So Luchs Express is not worth its price.
+- **December:** Luchs Logistik was on time for only «checks.luchs_december_on_time_pct:.1f» % of its December shipments.
+- **Damage:** Biber Freight has the highest damage rate: «overall.Biber Freight.damage_pct:.1f» % of its delivered shipments.
+
+</details>
 '''),
     md('''
-**Your answer** (double-click here, write, press Shift + Enter):
+## What to remember
+
+- **Write your rules into the prompt**, so the AI follows them. The same question gave different answers.
+- **Ask for evidence:** what did your AI show, and what did it only suspect?
+- **The definition decides the result:** the same six rows gave «hand_example.on_time_pct:.0f» %, «hand_example.dropped_on_time_pct:.0f» % or «hand_example.all_rows_on_time_pct:.0f» %.
+- **Compare within each country:** a number can be correct and still answer the wrong question.
 '''),
     md(f'''
 ---
-**Next:** open [notebook 2, Build The App]({colab(2)}) and do its section 1: read the spec (the description) of your app.
+**Next:** open [notebook 2, Build The App]({colab(2)}). We start it together.
 '''),
 ]
 
@@ -463,56 +706,84 @@ def test_cells_src():
 
 NB2 = [
     header(2, """
-**Hands-on 2.** In block 1 you do only section 1 (about 6 minutes). After the break you do sections 2 to 5 (about 20 minutes).
-
-The dispatchers (the people who book each shipment) should not need to ask you each time. So you make a small app from your analysis: the **Carrier Scorecard**. You do not write the code yourself. You describe the app, your AI writes it, you run it in the browser, and you **test it with numbers you know**.
+**The end of block 1, and the first part of block 2.** The dispatchers (the people who book each shipment) should not need to ask you each time. So you make a small app from your analysis: the **Carrier Scorecard**. You do not write the code yourself. You describe the app, your AI writes it, you run it in the browser, and you **test it with numbers you know**.
 
 ![The reference app](https://raw.githubusercontent.com/FH-Prevail/ailab/main/app/scorecard.png)
-""", f"""
-**Before you start**
+""", look_back=False),
+    md(f'''
+## Vibe coding in one picture
+
+**Vibe coding** means: you describe the app in plain words, the AI writes the code, and you test what it built.
+
+> "Fully give in to the vibes ... and forget that the code even exists." Andrej Karpathy, 2025
+
+{figure("vibe_coding", "Five steps: describe the app in a spec, the AI writes the code, run it in the browser, test it with numbers you know, change one thing. Then repeat from step 2: one change at a time, test again after each change.")}
+
+- **Good for:** first test versions (prototypes), a tool for yourself or your team, a dashboard on test data, learning what is possible.
+- **Not without a review by someone who reads the code:** customer or personal data, money, security, anything that others need every day.
+
+> **An app that runs is not always correct.**
+
+**Watch first (live demo).** I give the spec of section 1 to an AI coding tool (Claude Code). It writes the file `app.py`. We run it and check one number: Italy, Gams Cargo, «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
+'''),
+    md(f"""
+## Before you start
 
 1. {SAVE_COPY}
 2. {PAIRS}
 3. **Use the same AI assistant as in notebook 1.** In section 2 you start a new chat in it. Use that chat for the whole notebook.
 
+**Your tasks:** before the break, only section 1 (about 6 minutes). After the break, sections 2 to 5 (about 20 minutes). Section 6 is optional: do it only if you finish early.
+
 **How it works: four steps in three places**
 
-1. **In this notebook** (section 1): read the spec, the written description of the app.
-2. **In your AI chat** (section 2): send the spec. The AI answers with the code of the app.
+1. **In this notebook** (section 1): run the cell that prints the spec (the written description of the app), and read it.
+2. **In your AI chat** (section 2): send what the cell printed. The AI answers with the code of the app.
 3. **In the app editor**, a new browser tab (section 3): paste the code and click **Save**. Your app runs there.
 4. **In your app** (section 4): test it with numbers you know.
 """),
     md('''
-## 1 · Read the spec (block 1)
+## 1 · Read the spec (before the break)
 
-A spec (specification) is a written description of the app. A good spec says **who** uses the app, **what** it answers, **which data** with which rules, the **inputs**, the **outputs** and the **code rules**.
+A spec (specification) is a written description of the app. Our spec has six parts:
+
+- **Who:** our dispatchers, who choose a carrier for each shipment.
+- **What:** which carrier is on time most often, and at what cost.
+- **Data:** the cleaned table, with one fixed line to load it. Empty cells mean "not known", never 0.
+- **Inputs:** country, service and months, in the sidebar (the panel on the left side of the app).
+- **Outputs:** a table per carrier, the best carrier with at least 30 known results, and a bar chart.
+- **Code rules:** one file; only Streamlit, pandas and Altair; short comments.
 
 **Do this, in this notebook:**
 
-1. Read our spec in the cell below.
-2. You may add something (for example an extra chart or another filter). Keep the data line, the names of the inputs, the column names and the rules: the test in section 4 needs them. Change only the text between the `"""` marks.
-3. Run the cell: click into it and press **Shift + Enter**. It prints the spec under the cell. You need that text in section 2.
+1. Run the closed cell below: click its ▶ play button. It prints your message for the AI chat: our spec, and at the end one line that asks for the code.
+2. Read the spec under the cell. Can you find the six parts?
+3. Optional: change the spec, for example add an extra chart or another filter. Click **Show code**, change only the text between the `"""` marks, and run the cell again. Keep the data line, the names of the inputs, the column names and the rules: the test in section 4 needs them.
 '''),
     code(f'''
+#@title Our spec: run this cell. It prints your message for the AI chat.
 SPEC = """{SPEC}"""   # EDIT: change what you want, keep the data line exactly as it is
 print(SPEC)
+print()
+print("Write app.py for this spec. Give me the complete file in one code block.")
+''', form=True),
+    md('''
+## Break
+
+**Stop here before the break.** Your spec is ready.
+
+Optional, in the break: create a free **Gemini API key** at [aistudio.google.com/apikey](https://aistudio.google.com/apikey). You need it only for the optional part of notebook 3.
+
+After the break, you build your app (sections 2 to 5). Then you give the AI tools (notebook 3).
 '''),
     md('''
-**In block 1, stop here.** After the break, continue with section 2.
-'''),
-    md('''
-## 2 · Let your AI write the code (block 2 starts here)
+## 2 · Let your AI write the code (after the break)
 
-**Do this, in your AI chat:**
+**Do this:**
 
-1. Start a new chat, so that the AI forgets the rules of notebook 1.
-2. Copy the line below into the chat. Under it, paste the spec that the cell in section 1 printed. Send both together, as one message.
-
-```
-Write app.py for this spec. Give me the complete file in one code block.
-```
-
-3. The AI answers with the code of the app. Copy the code. Do not paste it into this notebook: it goes into the app editor (section 3).
+1. **In your AI chat:** start a new chat, so that the AI forgets the rules of notebook 1.
+2. **In this notebook:** copy everything that the cell in section 1 printed, from "Build a small web app" to "in one code block."
+3. **In your AI chat:** paste it and send it. The AI answers with the code of the app. Copy the code. Do not paste it into this notebook: it goes into the app editor (section 3).
 '''),
     md(f'''
 ## 3 · Run it in your browser
@@ -569,10 +840,18 @@ import subprocess, sys
 from pathlib import Path
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "streamlit==1.67.0"], check=True)
 from streamlit.testing.v1 import AppTest
+import logging
 
 EXPECTED = {test_cells_src()}
 
 def test_my_app(path="app.py"):
+    code = Path(path).read_text(encoding="utf-8").splitlines() if Path(path).exists() else []
+    if not [line for line in code if line.strip() and not line.strip().startswith("#")]:
+        print(f"{{path}} has no code yet. Paste your app's code into the cell above, run that cell, then run this cell again.")
+        return
+    print(f"Testing {{path}}: the test sets the sidebar six times and reads one number each time.")
+    print("OK: the number is right.   OFF: the number is wrong.   ?: the test could not read it, so check it by hand.")
+    logging.disable(logging.WARNING)      # hide Streamlit's own warnings during the test: they are not about your app
     passed = 0
     for country, service, first, last, carrier, column, expected in EXPECTED:
         at = AppTest.from_file(str(Path(path).resolve()), default_timeout=120).run()   # a full path: AppTest needs it
@@ -591,6 +870,7 @@ def test_my_app(path="app.py"):
         ok = abs(got - expected) < 0.05
         passed += ok
         print(("OK  " if ok else "OFF ") + f"{{country}}, {{service}}, months {{first}} to {{last}}, {{carrier}}, {{column}}: app {{got}}, expected {{expected}}")
+    logging.disable(logging.NOTSET)
     print(f"{{passed}} of {{len(EXPECTED)}} checks passed")
 
 test_my_app()
@@ -629,7 +909,7 @@ Add a download button for the table as CSV. Give me the complete file again.
 **Your answer** (double-click here, write, press Shift + Enter): which change did you make, and do your checks still pass?
 '''),
     md(f'''
-## 6 · Extra task: an app with one wrong line
+## 6 · Optional: an app with one wrong line
 
 An AI wrote [this app]({RAW}/app/buggy_app.py) from the same spec. It runs and looks right.
 
@@ -643,9 +923,16 @@ An AI wrote [this app]({RAW}/app/buggy_app.py) from the same spec. It runs and l
     md('''
 **Your answer** (double-click here, write, press Shift + Enter):
 '''),
+    md('''
+## What to remember
+
+- **An app that runs is not always correct.** Test it with numbers you already trust.
+- **One change at a time.** Test again after each change.
+- Vibe coding is good for prototypes and for tools for yourself. If others need the app every day, someone must read the code first.
+'''),
     md(f'''
 ---
-**Next:** [notebook 3, Give The AI Tools]({colab(3)}).
+**Next:** open [notebook 3, Give The AI Tools]({colab(3)}). We start it together.
 '''),
 ]
 
@@ -699,7 +986,7 @@ def result_lines(data):
 '''.strip("\n")
 
 HOST = '''
-#@title The host: run this cell. It prints nothing. (Show code: the loop you saw on the slide.)
+#@title The host: run this cell. It prints nothing. (Show code: the loop of "How a tool call works".)
 import asyncio
 from google import genai
 from google.genai import types
@@ -812,21 +1099,106 @@ KEY3 = f"""
 </details>
 """
 
+def demo_recording():
+    """The live demo of notebook 3 as a recording (trace 4): the question, the tool calls, and two sentences of the answer."""
+    t = json.loads((ROOT / "traces" / "4_operational.json").read_text(encoding="utf-8"))
+    late = json.loads(t["steps"][0]["result"])
+    notes = json.loads(t["steps"][1]["result"])["notes"]
+    args = ", ".join(f"{k}={v!r}" for k, v in t["steps"][0]["args"].items())
+    sentences = t["answer"].replace("**", "").split(". ")
+    limit = next((s for s in sentences if "only the 20" in s or "returned only" in s), None)
+    if limit is None:
+        raise SystemExit("traces/4_operational.json no longer says that it saw only 20 shipments: rewrite the demo block")
+    calls = "\n".join([f"late_shipments({args})",
+                       f"   -> {late['late_or_lost_in_selection']} late or lost, {late['shown']} shown",
+                       f"carrier_notes(carrier={t['steps'][1]['args']['carrier']!r})",
+                       f"   -> {len(notes)} notes, for example:",
+                       f"      {notes[0]['note']}"])
+    return dict(question=t["question"], calls=calls, first=sentences[0].strip() + ".", limit=limit.strip() + ".",
+                recorded=long_date(t["recorded"]))
+
+
+def planted_note():
+    """The note we planted in the carrier data, as the model saw it in trace 3."""
+    t = json.loads((ROOT / "traces" / "3_poisoned_note.json").read_text(encoding="utf-8"))
+    for step in t["steps"]:
+        if step["tool"] == "carrier_notes" and "Biber" in json.dumps(step["args"]):
+            for n in json.loads(step["result"])["notes"]:
+                if "AI assistants" in n["note"]:
+                    return n["note"]
+    raise SystemExit("traces/3_poisoned_note.json no longer contains the planted note")
+
+
+DEMO = demo_recording()
+
 NB3 = [
     header(3, """
-**Block 2, hands-on 3 (about 15 minutes).** Until now, you sent prompts to your AI chat and copied its code into Colab or into the app editor. With **MCP** (Model Context Protocol), the AI gets *tools*: small programs on a server that find information for it. The server does the counting. The model decides which tool to call, and it reads the result.
+**The second part of block 2.** Until now, you sent prompts to your AI chat and copied its code into Colab or into the app editor. With **MCP** (Model Context Protocol), the AI gets *tools*: small programs on a server that find information for it. The server does the counting. The model decides which tool to call, and it reads the result.
 
 Three words for this notebook:
 
 - **Host:** the app you talk to. In the recordings of section 3 it is Claude Code. In section 4 it is the cell `ask()` in this notebook. In real life: ChatGPT, Claude Code, Gemini CLI, Copilot or LM Studio.
 - **Model:** the AI that writes the answer. In the recordings it is Claude Haiku. In section 4 it is Gemini.
 - **MCP server:** the program that offers the tools. Here it is `shipments_server.py`, with four read-only tools (they read data, but never change it). In real life: servers for Power BI, an ERP (business software), a database, Excel or GitHub.
-""", f"""
-**Before you start**
+"""),
+    md(f'''
+## Why MCP
+
+MCP is an open standard: one standard way to connect AI apps to your systems. The company Anthropic introduced it in November 2024.
+
+{figure("why_mcp", "Without a standard, four AI apps and four systems need 16 connections. With MCP in the middle they need 8, and each new app or system adds one.")}
+
+- **Without a standard,** every AI app needs its own connection to every system: 4 apps × 4 systems = 16 connections.
+- **With MCP,** every app and every system connects once: 4 + 4 = 8. A new app or a new system adds only one.
+
+The MCP documentation calls it "a USB-C port for AI applications". The host must support the way the server connects (a program on your computer, or a web address), and it must allow access.
+
+> **Build a connection once, then use it with every host that supports MCP.**
+'''),
+    md(f'''
+## How a tool call works
+
+One question, step by step. The host delivers every message. The model never touches the data: it only reads the tool descriptions and the tool results.
+
+{figure("tool_call", "Eight messages between host, model and MCP server: 1 the host asks the server for its tools, 2 the server sends four tools with name, description and inputs, 3 the host sends your question and the descriptions to the model, 4 the model asks to call carrier_scorecard for Italy, 5 the host runs it on the server, 6 the server sends the result, 7 the host gives the result to the model, 8 the model writes the answer in words.")}
+
+Steps 1 and 2 happen once, at the start. Steps 3 to 8 happen for your question. The model can ask for several tools, one after the other. In section 4, the function `ask()` is this host, in about 30 lines of Python.
+
+> **The server calculates. The model chooses the tool and reads the result: it can still misread a correct result.**
+'''),
+    md(f'''
+## Live demo: late shipments to review
+
+**Watch (live demo).** I use Claude Code as the host, with our shipments server. This is a question for daily work, not for a report:
+
+> {DEMO["question"]}
+
+<details>
+<summary><b>The recording of this demo (open it to read it again)</b></summary>
+
+The tool calls that the model chose, and what came back:
+
+```
+{DEMO["calls"]}
+```
+
+- **The answer starts with:** {DEMO["first"]}
+- **It noticed the limit:** "{DEMO["limit"]}"
+
+*Recorded on {DEMO["recorded"]} with Claude Haiku and Claude Code. The whole recording is trace 4 in the [worksheet](https://github.com/{REPO}/blob/main/traces/README.md).*
+
+</details>
+
+> **The same server works with different hosts: Claude Code here, Gemini in section 4 of this notebook.**
+'''),
+    md(f"""
+## Before you start
 
 1. {SAVE_COPY}
 2. **Work in pairs on one laptop.** One person runs the cells, the other checks each claim against the results. Change roles after each section.
-3. **You need no AI chat and no key for sections 1 to 3.** You only run cells and read. Sections 4 and 5 are optional and need a free Gemini key.
+3. **You need no AI chat and no key for sections 1 to 3.** You only run cells and read.
+
+**Your tasks:** "Start here", then sections 1 to 3. Sections 4 and 5 are optional and need a free Gemini key: do them only if you finish early.
 
 **How to run a cell:** click into it and press **Shift + Enter**. A closed cell shows only its title: click its ▶ play button to run it. If Colab says "This notebook was not authored by Google", click **Run anyway**.
 
@@ -889,6 +1261,8 @@ async def list_tools():
             return (await session.list_tools()).tools
 
 import inspect
+print("The four tools of the server. For each tool: its name, its inputs in brackets, and the description that the model reads.")
+print()
 for tool in await list_tools():
     print(f"{tool.name}{tuple(tool.input_schema.get('properties', {}))}")
     print("\\n".join("    " + line for line in inspect.cleandoc(tool.description).splitlines()), "\\n")
@@ -902,11 +1276,13 @@ The same calculation, twice: once **through MCP** (the way an AI calls it) and o
 **Do this:** run both cells below. Is the on-time % of Gams Cargo the same in both? It should be: the server does the work, not the model. (The line `# CHECK:` in a cell shows what you should see.)
 '''),
     code('''
+print("Through MCP, the way an AI calls the tool: carrier_scorecard for Italy")
 print(pretty(await call("carrier_scorecard", country="IT")))
 # CHECK: Gams Cargo: «by_country.IT.Gams Cargo.on_time_pct» % on time of «by_country.IT.Gams Cargo.resolved» known
 '''),
     code('''
 import shipments_server                       # the same file, imported as a normal Python module
+print("As a plain Python function: the first carrier in the result for Italy")
 print(shipments_server.carrier_scorecard(country="IT")["carriers"][0])
 # CHECK: 'carrier': 'Gams Cargo'  'on_time_pct': «by_country.IT.Gams Cargo.on_time_pct»
 '''),
@@ -966,6 +1342,33 @@ show("3_poisoned_note")
 **Your answer for trace 3** (double-click here, write, press Shift + Enter):
 '''),
     md(KEY3),
+    md(f'''
+### Look back: when data contains instructions
+
+<details>
+<summary><b>Open this after trace 3</b></summary>
+
+**Prompt injection** means: text inside a tool result that tries to control the AI. This is the note in our carrier data. Someone outside the company pasted it into the carrier portal:
+
+> "{planted_note()}"
+
+**What happened**
+
+- In our recording, the model read the note, **ignored it, and did not tell you**.
+- Gemini did the same in our test. In another run it **asked for carriers that do not exist**, never saw the note, and still wrote "based on the team notes".
+- **A real case,** May 2025: a public GitHub issue made an AI agent (an AI that acts on its own) copy data from private repositories into a public one (reported by Invariant Labs).
+
+**What protects you**
+
+- **Read-only** tools first. A human approves every change.
+- Treat text in tool results as **data, not instructions**.
+- **Limit access:** what the AI can read, and where it can send data.
+- Know where the text in your data **comes from**.
+
+> **Read-only tools prevent changes, but not data leaks or wrong advice.**
+
+</details>
+'''),
     md('''
 ## 4 · Optional: ask Gemini yourself (free key)
 
@@ -1069,7 +1472,7 @@ marker_line, rest = rest.split("\\n", 1)
 _, tail = rest.split(end, 1)
 Path("shipments_server.py").write_text(head + start + marker_line + "\\n" + NEW_TOOL.strip() + "\\n" + end + tail,
                                        encoding="utf-8")
-print([t.name for t in await list_tools()])
+print("The tools on the server now:", [t.name for t in await list_tools()])
 # CHECK: ['list_carriers', 'carrier_scorecard', 'late_shipments', 'carrier_notes']
 # With your tool pasted in, its name appears once more at the end of this list.
 """),
@@ -1077,14 +1480,77 @@ print([t.name for t in await list_tools()])
 await ask("What does a kg cost us with each carrier to Italy?")
 ''', live=True),
     md('''
-## What to remember
+## MCP use cases in a supply chain
+
+Many systems already have MCP servers. Start where a wrong answer costs little.
+
+| System | What an AI could do through MCP | Start with |
+|---|---|---|
+| ERP (business software) | find an order, a stock level, a supplier's delivery history | read-only |
+| Transport, warehouse | shipment status, late shipments, carrier performance (today's server) | read-only |
+| Excel, SharePoint | read the planning workbook, fill a template | read first, then write with approval |
+| Power BI | build and check KPI formulas (measures), query the data model (the next demo) | a copy of the data model |
+| Database | answer a question in SQL on the data warehouse | a read-only user |
+| Email, Teams | draft a complaint to a carrier | drafts only: a human sends |
+| Browser | test our app, read a carrier portal | a test account |
+
+**Talk with your partner:** which system in your company would you connect first, and with which permission?
+
+> **Start read-only, with data you are allowed to share.**
+'''),
+    md('''
+## Live demo: our KPIs in Power BI
+
+**Watch (live demo).** KPIs are key numbers such as on time %. I build the KPIs of our app again in Power BI, and I check them against the numbers we already trust.
+
+Two parts from Microsoft do the work:
+
+- **Power BI Authoring MCP server:** a live connection to the data model that is open in Power BI Desktop. It creates measures (formulas), tables and relationships, and it runs DAX queries (DAX is the formula language of Power BI). It does **not** draw report pages.
+- **Report authoring skill:** instructions plus a tool that checks the report files of a project saved as .pbip. It writes pages and visuals. Power BI Desktop shows them after you open the project again. It does **not** change the open data model.
+
+The four steps. Each one is a prompt to Claude Code, with a check:
+
+1. "Connect to CarrierScorecard in Power BI Desktop and list its tables." Check: one table, `shipments`.
+2. "Read app/app.py and create its six KPIs as DAX measures." Check: six measures appear.
+3. "Query them for Italy and compare with evidence/check_table.csv." Check: Gams Cargo «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
+4. "Add a report page like the app." This step is prepared. Check: open the project again.
+
+To try it yourself (Windows and Power BI Desktop): [powerbi/README.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/README.md) on the course page.
+
+> **Same definitions, same numbers, in any tool.**
+'''),
+    md('''
+## What to remember about MCP
 
 - MCP is a **standard**: one server works with every MCP host that supports it, for example Claude, ChatGPT, Gemini CLI, Copilot, or LM Studio with a local model. The host must support the way the server connects (ours runs as a program on the same computer), and it must allow access. The same `shipments_server.py` runs in Claude Code with `claude mcp add shipments -- python shipments_server.py`.
 - **The description matters**: the model only knows what the tool says about itself.
 - **Check how the model used each result**: which tool ran, with which inputs, and does every number in the answer come from a result or a correct calculation?
 - Start **read-only**. Read-only tools prevent changes, but not data leaks or wrong advice. So also limit what the agent can read and where it can send data. Know what leaves your computer (here: the questions and tool results go to Google).
+'''),
+    md('''
+## The whole session: which approach for which task
+
+Three ways to work with AI, and each one needs its own check.
+
+| | Good for | Not for | Your check |
+|---|---|---|---|
+| **Vibe analytics** | exploring a new table, quick questions, a first look | a decision without written definitions | evidence and counts; one number by hand |
+| **Vibe coding** | prototypes, internal tools, dashboards on test data | daily use with real data, without a code review | test with numbers you already trust |
+| **MCP** | connecting AI to live systems and documents | changing data without a human who approves | read the trace: which tool, which inputs, which result |
+
+**What I hope you remember from today**
+
+- **The AI writes the code. You decide what the words mean, and you check the result.**
+- **Ask for evidence:** code, counts, and what the AI showed against what it only suspected.
+- **Compare within each country:** a number can be correct and still answer the wrong question.
+- **An app that runs is not always correct:** test it with numbers you already trust.
+- **Tools let the AI act:** start read-only, read the trace, and check how the AI used each result.
 
 **Before you leave** (post it in the chat or give it to me on paper): one carrier recommendation with its number and count, one app check you ran, one thing you learned from a trace.
+'''),
+    md('''
+---
+**Thank you.** Sina Mirshahi · Sina.Mirshahi@fh-steyr.at · Notebooks, data and app: [github.com/FH-Prevail/ailab](https://github.com/FH-Prevail/ailab)
 '''),
 ]
 

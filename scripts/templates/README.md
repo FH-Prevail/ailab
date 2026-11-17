@@ -13,6 +13,8 @@ You need two things: a **Google account**, and one **AI assistant** that you can
 1. Open notebook 1: click its **Open in Colab** button in the table below.
 2. Follow the notebook from the top. It tells you each step.
 
+There are no slides. Each notebook has everything, from top to bottom: what I show on the screen, your tasks, and the **Look back** blocks that we open after a task.
+
 **The plan:** block 1 is notebook 1 and section 1 of notebook 2. Block 2 is the rest of notebook 2, then notebook 3. At the end you post three lines in the chat, or give them to me on paper: one carrier recommendation with its number, one app check you ran, and one thing you learned from a recording.
 
 Share only course data with AI tools, never company data.
@@ -45,10 +47,6 @@ The first time, the starter can take up to a minute to load.
 
 The key is free in Google AI Studio. The free version (free tier) allows only a limited number of requests per minute and per day. The limits change, so check them in AI Studio (checked «CHECKED_DATE»). Store the key as a Colab secret, never in a cell or a prompt. Your questions and the tool results in notebook 3 go to Google; the app in your browser stays in your browser.
 
-## Slides
-
-[The slides as PDF](slides/AI_Lab_Vibe_Analytics_Coding_MCP.pdf)
-
 ---
 
 ## For later (not needed in class)
@@ -80,7 +78,7 @@ The demo of block 2 uses the app's KPI definitions (KPIs: key numbers such as on
 
 ### How the numbers were made
 
-`data/make_dataset.py` makes the data (fixed seed, identical files every time). `analysis/build_evidence.py` applies the metric contract and writes every number the slides, notebooks and checks show into `evidence/results.json` and `evidence/check_table.csv`. It stops if a result that the session teaches is no longer true. `scripts/test_app.py` and `scripts/test_mcp.py` check the app and the MCP server against the same table.
+`data/make_dataset.py` makes the data (fixed seed, identical files every time). `analysis/build_evidence.py` applies the metric contract and writes every number that the notebooks, the pictures and the checks show into `evidence/results.json` and `evidence/check_table.csv`. It stops if a result that the session teaches is no longer true. `scripts/test_app.py` and `scripts/test_mcp.py` check the app and the MCP server against the same table. `scripts/build_figures.py` draws the pictures in the notebooks (it needs matplotlib).
 
 ```bash
 python3 -m pip install -r requirements.txt
