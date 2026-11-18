@@ -53,7 +53,7 @@ def trace_worksheet() -> str:
             args = ", ".join(f"{k}={v!r}" for k, v in step["args"].items())
             out += [f"**Tool call:** `{step['tool']}({args})`", "", "```", pretty(step["result"]), "```", ""]
         out += [f"**Answer:** {t['answer']}", "", f"*Recorded {t['recorded']} with {t['model']}; host: {t['host']}.*", ""]
-        key = {"1_supported": KEY1, "2_unsupported": KEY2, "3_poisoned_note": KEY3}.get(path.stem)
+        key = {"1_supported": KEY1, "2_unsupported": KEY2, "3_team_notes": KEY3}.get(path.stem)
         if key:
             out += [fill(key).strip(), ""]
     return "\n".join(out)

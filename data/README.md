@@ -48,7 +48,7 @@ The same columns, cleaned with the rules of notebook 1, section 3. There are als
 
 ## `carrier_notes.csv`
 
-`date`, `carrier`, `author`, `note`. One note contains text written for AI assistants. It is the example of prompt injection (text that tries to control an AI) in hands-on 3, not advice.
+`date`, `carrier`, `author`, `note`. The MCP server of notebook 3 reads them with its tool `carrier_notes`.
 
 ## Licence
 

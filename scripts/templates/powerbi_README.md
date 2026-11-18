@@ -5,36 +5,37 @@ The demo in block 2: an AI agent (an AI that works on its own, step by step) rea
 | Part | What it does | How it connects to Power BI |
 |---|---|---|
 | **Power BI Authoring MCP server** (Microsoft, formerly "Modeling MCP server") | reads and changes the **semantic model** (the tables and formulas behind a report): tables, columns, measures, relationships; runs DAX queries (DAX is the formula language of Power BI) | live, through MCP, to the model open in Power BI Desktop |
-| **Report authoring skill** (`powerbi-authoring` plugin from Microsoft's `skills-for-fabric`) | writes **report pages and visuals** | by editing the report files of a project saved as `.pbip`; Desktop shows them after you reopen the project |
+| **Report authoring skill** (`powerbi-authoring` plugin from Microsoft's `skills-for-fabric`) | writes **report pages and visuals** | by writing the report files of a project saved as `.pbip`; Microsoft's report tool validates them and reloads them into the open Power BI Desktop |
 
 The MCP server cannot draw charts (visuals). The skill does not change the open model. The agent here is Claude Code; VS Code with GitHub Copilot or the GitHub Copilot CLI work the same way.
 
 ## What you need
 
 - Windows with **Power BI Desktop** (free). The local MCP server does not run on macOS.
-- **Node.js 18 or newer** (for `npx`).
+- **Node.js 20 or newer** (for `npx` and the report tool).
 - An MCP host: **Claude Code**, or **VS Code with GitHub Copilot** (Copilot is free for verified students).
 - This repository: `app/app.py`, `data/shipments_2025_clean.csv`, `evidence/check_table.csv`.
 
 ## Setup (once)
 
-1. **Power BI Desktop:** before you import anything, open *File, Options and settings, Options, Current file, Regional settings* and set *Locale for import* to **English (United States)**. The CSV uses a decimal point; with a German locale, 23.77 € would be read as 2,377 €.
+1. **Power BI Desktop:** before you import anything, open *File, Options and settings, Options, Current file, Regional settings* and set *Locale for import* to **English (United States)**. The CSV uses a decimal point; with a German locale, 23.77 € would be read as 2,377 €. In the same window, under *Data load*, untick *Auto date/time*: otherwise Power BI adds a hidden date table for every date column.
 2. *Get data, Text/CSV*, choose `data/shipments_2025_clean.csv`, *Load*. Rename the table to `shipments`.
-3. *File, Save as*, type **Power BI project (.pbip)**, name it `CarrierScorecard`.
-4. Register the MCP server with your host. In Claude Code on Windows (the `cmd /c` wrapper lets Windows start `npx`):
-
-   ```
-   claude mcp add powerbi-authoring --scope user -- cmd /c npx -y @microsoft/powerbi-modeling-mcp@latest --start
-   ```
-
-   In VS Code: install the extension *Power BI Modeling MCP* or add the server in `.vscode/mcp.json` with `"command": "npx", "args": ["-y", "@microsoft/powerbi-modeling-mcp@latest", "--start"]`.
-5. The server blocks every tool until its licence terms (EULA) are accepted. Read them first; the agent then asks you to accept them once.
-6. For report pages, add the skill (Claude Code):
+3. *File, Save as, Browse this device*. In the save window, set *Save as type* (under the file name) to **Power BI project files (*.pbip)**; the default is `.pbix`, which the report skill cannot edit. Name it `CarrierScorecard`.
+4. In Claude Code, install Microsoft's `powerbi-authoring` plugin. It brings both parts: the MCP server and the report authoring skill (checked on 17 November 2026, plugin version 0.3.22).
 
    ```
    claude plugin marketplace add microsoft/skills-for-fabric
    claude plugin install powerbi-authoring@fabric-collection
    ```
+
+   The skill uses Microsoft's report tool. Install it once:
+
+   ```
+   npm install -g @microsoft/powerbi-report-authoring-cli@latest
+   ```
+
+   Do not also add the server with `claude mcp add`: then Claude Code has every tool twice. In VS Code: install the extension *Power BI Modeling MCP* or add the server in `.vscode/mcp.json` with `"command": "npx", "args": ["-y", "@microsoft/powerbi-modeling-mcp@latest", "--start"]`.
+5. The server blocks every tool until its licence terms (EULA) are accepted. Read them first; the agent then asks you to accept them once.
 
 ## The prompts
 
