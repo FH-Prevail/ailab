@@ -25,7 +25,7 @@ Share only course data with AI tools, never company data.
 |---|---|---|
 | [1 · Ask Your Data](notebooks/1_ask_your_data.ipynb) | Block 1: ask an AI about the export, check the data, agree on a definition, compare within each country | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](«COLAB1») |
 | [2 · Build The App](notebooks/2_build_the_app.ipynb) | Section 1 in block 1 (read the spec). The rest in block 2: let an AI write the app, run it in your browser, test it with numbers you know | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](«COLAB2») |
-| [3 · Give The AI Tools](notebooks/3_give_the_ai_tools.ipynb) | Block 2: an MCP server with four tools, recordings to check; after class (optional): your own questions to Gemini | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](«COLAB3») |
+| [3 · Give The AI Tools](notebooks/3_give_the_ai_tools.ipynb) | Block 2: an MCP server with four tools, recordings to check; after class (optional): the tools themselves, your own questions to Gemini | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](«COLAB3») |
 
 If a button does not open, copy the address: «COLAB1», «COLAB2», «COLAB3». Or open Colab, choose **File, Open notebook, GitHub**, and type `FH-Prevail/ailab`.
 
@@ -45,7 +45,7 @@ The first time, the starter can take up to a minute to load.
 
 ## Gemini API key (after class, notebook 3)
 
-You need the key only for sections 4 and 5 of notebook 3, after class. It is free in Google AI Studio: [aistudio.google.com/apikey](https://aistudio.google.com/apikey). Section 4 of notebook 3 shows each step. The free version (free tier) allows only a limited number of requests per minute and per day. The limits change, so check them in AI Studio (checked «CHECKED_DATE»). Store the key as a Colab secret, never in a cell or a prompt. Your questions and the tool results in notebook 3 go to Google; the app in your browser stays in your browser.
+You need the key only for sections 3 and 4 of notebook 3, after class. It is free in Google AI Studio: [aistudio.google.com/apikey](https://aistudio.google.com/apikey). Section 3 of notebook 3 shows each step. The free version (free tier) allows only a limited number of requests per minute and per day. The limits change, so check them in AI Studio (checked «CHECKED_DATE»). Store the key as a Colab secret, never in a cell or a prompt. Your questions and the tool results in notebook 3 go to Google; the app in your browser stays in your browser.
 
 ---
 
