@@ -30,10 +30,10 @@ Trace 3 contains a note that we put into our data on purpose. For trace 3, also 
 
 ```
    selection: IT, all, months 1 to 12
-   Carrier          On time % Known result Shipments Transit days Cost EUR Damaged %
-   Gams Cargo            85.1          429       433         5.11    40.08       1.4
-   Biber Freight         75.0          180       180         5.49    31.58       1.7
-   Falke Transport       69.9          133       133         5.85    42.48       0.8
+   Carrier           On time %  Known result  Shipments  Transit days  Cost EUR  Damaged %
+   Gams Cargo             85.1           429        433          5.11     40.08        1.4
+   Biber Freight          75.0           180        180          5.49     31.58        1.7
+   Falke Transport        69.9           133        133          5.85     42.48        0.8
    no shipments: Luchs Logistik
    a carrier needs at least 30 known results to be recommended
 ```
@@ -68,10 +68,10 @@ Trace 3 contains a note that we put into our data on purpose. For trace 3, also 
 
 ```
    selection: DE, all, months 1 to 12
-   Carrier          On time % Known result Shipments Transit days Cost EUR Damaged %
-   Luchs Logistik        89.1          626       631         3.98    28.69       1.6
-   Falke Transport       86.8          319       320         4.03    35.06       1.3
-   Biber Freight         85.9          277       278         4.12    26.26       4.7
+   Carrier           On time %  Known result  Shipments  Transit days  Cost EUR  Damaged %
+   Luchs Logistik         89.1           626        631          3.98     28.69        1.6
+   Falke Transport        86.8           319        320          4.03     35.06        1.3
+   Biber Freight          85.9           277        278          4.12     26.26        4.7
    no shipments: Gams Cargo
    a carrier needs at least 30 known results to be recommended
 ```
@@ -106,11 +106,11 @@ Trace 3 contains a note that we put into our data on purpose. For trace 3, also 
 
 ```
    selection: all, all, months 1 to 12
-   Carrier          On time % Known result Shipments Transit days Cost EUR Damaged %
-   Falke Transport       90.8         2008      2020         3.11    31.68       0.9
-   Gams Cargo            88.9         1118      1129         4.43    36.08       0.9
-   Luchs Logistik        88.3         1229      1237         3.69    26.74       1.3
-   Biber Freight         85.2         1526      1532         3.68    25.62       3.6
+   Carrier           On time %  Known result  Shipments  Transit days  Cost EUR  Damaged %
+   Falke Transport        90.8          2008       2020          3.11     31.68        0.9
+   Gams Cargo             88.9          1118       1129          4.43     36.08        0.9
+   Luchs Logistik         88.3          1229       1237          3.69     26.74        1.3
+   Biber Freight          85.2          1526       1532          3.68     25.62        3.6
    a carrier needs at least 30 known results to be recommended
 ```
 
@@ -156,11 +156,11 @@ Trace 3 contains a note that we put into our data on purpose. For trace 3, also 
 
 ```
    selection: AT, all, months 1 to 12
-   Carrier          On time % Known result Shipments Transit days Cost EUR Damaged %
-   Gams Cargo            98.9          186       186         2.18    27.88       0.0
-   Falke Transport       95.4         1322      1331         2.35    28.96       0.8
-   Biber Freight         89.5          618       619         2.47    22.88       3.9
-   Luchs Logistik        87.3          292       293         2.63    24.67       1.4
+   Carrier           On time %  Known result  Shipments  Transit days  Cost EUR  Damaged %
+   Gams Cargo             98.9           186        186          2.18     27.88        0.0
+   Falke Transport        95.4          1322       1331          2.35     28.96        0.8
+   Biber Freight          89.5           618        619          2.47     22.88        3.9
+   Luchs Logistik         87.3           292        293          2.63     24.67        1.4
    a carrier needs at least 30 known results to be recommended
 ```
 
@@ -168,10 +168,10 @@ Trace 3 contains a note that we put into our data on purpose. For trace 3, also 
 
 ```
    selection: DE, all, months 1 to 12
-   Carrier          On time % Known result Shipments Transit days Cost EUR Damaged %
-   Luchs Logistik        89.1          626       631         3.98    28.69       1.6
-   Falke Transport       86.8          319       320         4.03    35.06       1.3
-   Biber Freight         85.9          277       278         4.12    26.26       4.7
+   Carrier           On time %  Known result  Shipments  Transit days  Cost EUR  Damaged %
+   Luchs Logistik         89.1           626        631          3.98     28.69        1.6
+   Falke Transport        86.8           319        320          4.03     35.06        1.3
+   Biber Freight          85.9           277        278          4.12     26.26        4.7
    no shipments: Gams Cargo
    a carrier needs at least 30 known results to be recommended
 ```
@@ -180,10 +180,10 @@ Trace 3 contains a note that we put into our data on purpose. For trace 3, also 
 
 ```
    selection: CZ, all, months 1 to 12
-   Carrier          On time % Known result Shipments Transit days Cost EUR Damaged %
-   Falke Transport       90.2           61        61         3.72    30.12       1.6
-   Luchs Logistik        87.5          311       313         4.14    24.75       0.6
-   Biber Freight         84.7          222       222         3.73    23.55       2.3
+   Carrier           On time %  Known result  Shipments  Transit days  Cost EUR  Damaged %
+   Falke Transport        90.2            61         61          3.72     30.12        1.6
+   Luchs Logistik         87.5           311        313          4.14     24.75        0.6
+   Biber Freight          84.7           222        222          3.73     23.55        2.3
    no shipments: Gams Cargo
    a carrier needs at least 30 known results to be recommended
 ```
@@ -192,10 +192,10 @@ Trace 3 contains a note that we put into our data on purpose. For trace 3, also 
 
 ```
    selection: HU, all, months 1 to 12
-   Carrier          On time % Known result Shipments Transit days Cost EUR Damaged %
-   Gams Cargo            88.5          288       290         5.19    38.85       1.0
-   Biber Freight         77.2          136       139         5.41    30.95       4.4
-   Falke Transport       76.5           98        99         5.65    39.97       0.0
+   Carrier           On time %  Known result  Shipments  Transit days  Cost EUR  Damaged %
+   Gams Cargo             88.5           288        290          5.19     38.85        1.0
+   Biber Freight          77.2           136        139          5.41     30.95        4.4
+   Falke Transport        76.5            98         99          5.65     39.97        0.0
    no shipments: Luchs Logistik
    a carrier needs at least 30 known results to be recommended
 ```
@@ -204,10 +204,10 @@ Trace 3 contains a note that we put into our data on purpose. For trace 3, also 
 
 ```
    selection: IT, all, months 1 to 12
-   Carrier          On time % Known result Shipments Transit days Cost EUR Damaged %
-   Gams Cargo            85.1          429       433         5.11    40.08       1.4
-   Biber Freight         75.0          180       180         5.49    31.58       1.7
-   Falke Transport       69.9          133       133         5.85    42.48       0.8
+   Carrier           On time %  Known result  Shipments  Transit days  Cost EUR  Damaged %
+   Gams Cargo             85.1           429        433          5.11     40.08        1.4
+   Biber Freight          75.0           180        180          5.49     31.58        1.7
+   Falke Transport        69.9           133        133          5.85     42.48        0.8
    no shipments: Luchs Logistik
    a carrier needs at least 30 known results to be recommended
 ```
@@ -216,10 +216,10 @@ Trace 3 contains a note that we put into our data on purpose. For trace 3, also 
 
 ```
    selection: SI, all, months 1 to 12
-   Carrier          On time % Known result Shipments Transit days Cost EUR Damaged %
-   Gams Cargo            88.4          215       220         4.03    31.45       0.5
-   Biber Freight         87.1           93        94         4.18     27.3       3.3
-   Falke Transport       82.7           75        76         4.07    36.47       0.0
+   Carrier           On time %  Known result  Shipments  Transit days  Cost EUR  Damaged %
+   Gams Cargo             88.4           215        220          4.03     31.45        0.5
+   Biber Freight          87.1            93         94          4.18      27.3        3.3
+   Falke Transport        82.7            75         76          4.07     36.47        0.0
    no shipments: Luchs Logistik
    a carrier needs at least 30 known results to be recommended
 ```

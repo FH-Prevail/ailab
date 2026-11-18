@@ -20,7 +20,7 @@ The MCP server cannot draw charts (visuals). The skill does not change the open 
 
 1. **Power BI Desktop:** before you import anything, open *File, Options and settings, Options, Current file, Regional settings* and set *Locale for import* to **English (United States)**. The CSV uses a decimal point; with a German locale, 23.77 € would be read as 2,377 €. In the same window, under *Data load*, untick *Auto date/time*: otherwise Power BI adds a hidden date table for every date column.
 2. *Get data, Text/CSV*, choose `data/shipments_2025_clean.csv`, *Load*. Rename the table to `shipments`.
-3. *File, Save as, Browse this device*. In the save window, set *Save as type* (under the file name) to **Power BI project files (*.pbip)**; the default is `.pbix`, which the report skill cannot edit. Name it `CarrierScorecard`.
+3. *File, Save as, Browse this device*. In the save window, open the folder `powerbi` of this repository (the folder of this file), name the file `CarrierScorecard`, and set *Save as type* (under the file name) to **Power BI project files (*.pbip)**; the default is `.pbix`, which the report skill cannot edit. The project is then `powerbi/CarrierScorecard.pbip`, inside the folder where you start Claude Code, so the agent can read and change it.
 4. In Claude Code, install Microsoft's `powerbi-authoring` plugin. It brings both parts: the MCP server and the report authoring skill (checked on 17 November 2026, plugin version 0.3.22).
 
    ```
@@ -39,7 +39,7 @@ The MCP server cannot draw charts (visuals). The skill does not change the open 
 
 ## The prompts
 
-Run them one at a time in the folder of this repository, with `CarrierScorecard` open in Power BI Desktop. They are in [prompts.md](prompts.md). If the agent cannot create a measure, [measures.dax](measures.dax) has all six to paste in by hand (*Modeling, New measure*).
+Open a terminal in the folder of this repository and type `claude`. Run the prompts one at a time, with `CarrierScorecard` open in Power BI Desktop. They are in [prompts.md](prompts.md). If the agent cannot create a measure, [measures.dax](measures.dax) has all six to paste in by hand (*Modeling, New measure*).
 
 ## What to check
 
