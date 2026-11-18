@@ -1351,6 +1351,15 @@ Many systems already have MCP servers. Start where a wrong answer costs little.
 > **Start read-only, with data you are allowed to share.**
 '''),
     md('''
+### Three servers to try after class
+
+Three real MCP servers for three rows of the table: Excel, database and browser. We did not test them in this course (checked on 18 November 2026). Try them only with copies and test data.
+
+- **Excel:** [Excel MCP Server](https://github.com/sbroenne/mcp-server-excel), a community project, not from Microsoft. The AI works in the real Excel app: Excel itself calculates the formulas, and it keeps pivot tables and charts. **Useful for:** "Make a pivot table of the shipments per carrier and country, with a chart." It needs Windows and Excel 2016 or newer.
+- **Database:** [MCP Toolbox for Databases](https://github.com/googleapis/mcp-toolbox), open source, from Google. It connects the AI to a database, for example SQL Server, PostgreSQL, MySQL, Oracle or Snowflake. In a company, the shipment data is usually in a database, not in a CSV file. **Useful for:** "How many shipments to Italy were late last month, per carrier?" The AI writes a query in SQL (the language of databases), runs it and answers with the result. You can also give the AI fixed tools, one SQL query each, like the tools of our shipments server: then it cannot run any other query. Give the AI a database user that can only read.
+- **Web browser:** [Playwright MCP](https://github.com/microsoft/playwright-mcp), from Microsoft. The AI opens web pages in a real browser: it clicks, types and reads the page. **Useful for:** the status of a shipment in a carrier portal; delivery times from several web pages, collected in one table; a test of your app from notebook 2: the AI opens the app, chooses Italy and compares the numbers with the table in section 4 of notebook 2. It needs Node.js 20 or newer (a free program). A web page can contain instructions for the AI, like the note in trace 3: check what the AI did.
+'''),
+    md('''
 ## Live demo: our KPIs in Power BI
 
 **Watch (live demo).** KPIs are key numbers such as on time %. I build the KPIs of our app again in Power BI, and I check them against the numbers we already trust.
@@ -1377,8 +1386,6 @@ To try it yourself (Windows and Power BI Desktop), on the course page:
 
 - [powerbi/README.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/README.md): all setup steps, also how to install the MCP server and the skill.
 - [powerbi/prompts.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/prompts.md): the four prompts in full, with what you should see after each one.
-
-**Excel too?** The MCP server above is for Power BI. For Excel, a community project lets an AI work in the real Excel app: [Excel MCP Server](https://github.com/sbroenne/mcp-server-excel). Excel itself calculates the formulas, and it keeps pivot tables and charts. It needs Windows and Excel 2016 or newer. It is not from Microsoft, and we did not test it in this course (checked on 18 November 2026). Try it only on a copy of a workbook.
 
 > **Same definitions, same numbers, in any tool.**
 '''),
