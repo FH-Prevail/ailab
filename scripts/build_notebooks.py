@@ -1461,6 +1461,8 @@ To try it yourself (Windows and Power BI Desktop), on the course page:
 - [powerbi/README.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/README.md): all setup steps, also how to install the MCP server and the skill.
 - [powerbi/prompts.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/prompts.md): the four prompts in full, with what you should see after each one.
 
+**Excel too?** The MCP server above is for Power BI. For Excel, a community project lets an AI work in the real Excel app: [Excel MCP Server](https://github.com/sbroenne/mcp-server-excel). Excel itself calculates the formulas, and it keeps pivot tables and charts. It needs Windows and Excel 2016 or newer. It is not from Microsoft, and we did not test it in this course (checked on 18 November 2026). Try it only on a copy of a workbook.
+
 > **Same definitions, same numbers, in any tool.**
 '''),
     md('''
