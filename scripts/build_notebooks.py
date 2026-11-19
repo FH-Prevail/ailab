@@ -729,6 +729,16 @@ NB2 = [
 
 > **An app that runs is not always correct.**
 
+**Three tools for the screen of an app.** With these free Python tools, a few lines of code make a web page with filters, tables and charts. You do not need to know how they work inside. Know what each one is good for, name it in your prompt ("Write a Streamlit app that ..."), and let your AI write the code. Then test it, as in section 4.
+
+| Tool | Good for | An example from our case |
+|---|---|---|
+| [Streamlit](https://streamlit.io) | a small data app: filters, a table, charts | our Carrier Scorecard |
+| [Gradio](https://www.gradio.app) (from Hugging Face) | a demo of an AI model: you type or upload something, the model answers | you type the details of a shipment, a model predicts if it will be late |
+| [Dash](https://dash.plotly.com) (from Plotly) | a larger dashboard with many linked charts, for a whole team | a carrier dashboard with several pages for the logistics department |
+
+Here we use **Streamlit**: it is the easiest to start with, and the app editor in section 3 runs it in your browser.
+
 **Watch first (live demo).** I give the spec of section 1 to an AI coding tool (Claude Code). It writes the file `app.py`. We run it and check one number: Italy, Gams Cargo, «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
 
 **No Claude Code? GitHub Copilot CLI is free for students.** Copilot CLI is an AI coding tool for the terminal, like Claude Code. To get it (checked on 19 November 2026):
