@@ -247,6 +247,24 @@ df.head()
 # CHECK: Ready: «data.rows» rows, 16 columns, ship dates «data.first_ship_date» to «data.last_ship_date»
 '''),
     md('''
+<details>
+<summary><b>Your own data from Google Drive (only to know: not needed today)</b></summary>
+
+Today we load the course data from the internet. For your own work, Colab can also read files from your Google Drive:
+
+```python
+from google.colab import drive
+drive.mount("/content/drive")      # Colab asks you to allow access to your Drive
+df = pd.read_csv("/content/drive/MyDrive/my_file.csv")   # your file in "My Drive"
+```
+
+- Colab asks for permission: the notebook can then read all files in your Drive. Allow it only in your own copy.
+- To find the path: click the folder icon on the left, open *drive, MyDrive*, right-click your file, *Copy path*.
+- Your AI chat sees only what you paste into it. Never paste company data.
+
+</details>
+'''),
+    md('''
 **Step B: tell your AI about your table.** Copy the prompt below and send it to your AI chat as your first message. It tells the AI what your table looks like. Your AI should answer "OK".
 
 ```
