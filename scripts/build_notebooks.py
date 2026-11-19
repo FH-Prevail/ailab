@@ -367,7 +367,7 @@ print("4. No delivery date:", len(missing), "rows:", missing["status"].value_cou
 
 When we asked Claude Haiku to check the data first, it found all four problems. It guessed the grams from the numbers alone: every value was a multiple of 100, and the weight no longer matched the cost. That is a guess, not a proof: only the warehouse can confirm it.
 
-> **Ask for evidence: what did your AI show, and what did it only suspect?**
+> **Check the evidence: what did your AI show, and what did it only suspect?**
 
 </details>
 '''),
@@ -663,7 +663,7 @@ This answers the second half of our question. In each cell, the first number is 
 ## What to remember
 
 - **Write your rules into the prompt**, so the AI follows them. The same question gave different answers.
-- **Ask for evidence:** what did your AI show, and what did it only suspect?
+- **Check the evidence:** what did your AI show, and what did it only suspect?
 - **The definition decides the result:** the same six rows gave «hand_example.on_time_pct:.0f» %, «hand_example.dropped_on_time_pct:.0f» % or «hand_example.all_rows_on_time_pct:.0f» %.
 - **Compare within each country:** a number can be correct and still answer the wrong question.
 
@@ -1472,7 +1472,7 @@ Three ways to work with AI, and each one needs its own check.
 **What I hope you remember from today**
 
 - **The AI writes the code. You decide what the words mean, and you check the result.**
-- **Ask for evidence:** code, counts, and what the AI showed against what it only suspected.
+- **Check the evidence:** code, counts, and what the AI showed against what it only suspected.
 - **Compare within each country:** a number can be correct and still answer the wrong question.
 - **An app that runs is not always correct:** test it with numbers you already trust.
 - **Tools let the AI act:** start read-only, read the trace, and check how the AI used each result.
