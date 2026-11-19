@@ -734,8 +734,8 @@ NB2 = [
 | Tool | Good for | An example from our case |
 |---|---|---|
 | [Streamlit](https://streamlit.io) | a small data app: filters, a table, charts | our Carrier Scorecard |
-| [Gradio](https://www.gradio.app) (from Hugging Face) | a demo of an AI model: you type or upload something, the model answers | you type the details of a shipment, a model predicts if it will be late |
-| [Dash](https://dash.plotly.com) (from Plotly) | a larger dashboard with many linked charts, for a whole team | a carrier dashboard with several pages for the logistics department |
+| [Gradio](https://www.gradio.app) (Hugging Face) | a demo of an AI model: you type, it answers | a model that predicts late shipments |
+| [Dash](https://dash.plotly.com) (Plotly) | a larger dashboard for a whole team | a carrier dashboard with several pages |
 
 Here we use **Streamlit**: it is the easiest to start with, and the app editor in section 3 runs it in your browser.
 
