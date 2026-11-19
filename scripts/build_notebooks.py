@@ -1404,7 +1404,13 @@ copilot plugin install powerbi-authoring@fabric-collection
 
 Then open a terminal in the course folder, type `copilot` and use the same four prompts. The other setup steps are the same as in powerbi/README.md.
 
-To add only one MCP server, Copilot CLI has `copilot mcp add`. For example, only the Power BI server, enough for steps 1 to 3 but not for step 4: `copilot mcp add powerbi-modeling-mcp -- npx -y @microsoft/powerbi-modeling-mcp@latest --start`. Do not add it next to the plugin: then every tool is there twice.
+To add only one MCP server, Copilot CLI has `copilot mcp add`. For example, only the Power BI server, enough for steps 1 to 3 but not for step 4:
+
+```
+copilot mcp add powerbi-modeling-mcp -- npx -y @microsoft/powerbi-modeling-mcp@latest --start
+```
+
+Do not add it next to the plugin: then every tool is there twice.
 
 We tested these install commands with Copilot CLI 1.0.114 on 19 November 2026. I ran the demo itself with Claude Code.
 
