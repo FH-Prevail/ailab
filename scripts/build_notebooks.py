@@ -741,6 +741,12 @@ Here we use **Streamlit**: it is the easiest to start with, and the app editor i
 
 **Watch first (live demo).** I give the spec of section 1 to an AI coding tool (Claude Code). It writes the file `app.py`. We run it and check one number: Italy, Gams Cargo, «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
 
+My prompt, in a folder with the file `spec.txt` (the spec of section 1):
+
+```
+Read spec.txt and write app.py for this spec. Save the complete file as app.py in this folder.
+```
+
 **No Claude Code? GitHub Copilot CLI is free for students.** Copilot CLI is an AI coding tool for the terminal, like Claude Code. To get it (checked on 19 November 2026):
 
 1. **Apply as a student** on [GitHub Education](https://github.com/settings/education/benefits): sign in to GitHub and click *Start an application*. You prove that you study, for example with your FH email address or a photo of your student card. The check can take a few days. After that, activate *Copilot Student* on the same page.
