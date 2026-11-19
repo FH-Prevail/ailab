@@ -98,6 +98,13 @@ def pct(x: float) -> float:
     return round(float(x) * 100, 1)
 
 
+def falke_on_gams_routes(resolved: pd.DataFrame) -> float:
+    """Falke's on-time share if it had Gams' routes: its rate per country, weighted by Gams' shipments there."""
+    gams = resolved[resolved["carrier"] == "Gams Cargo"].groupby("country").size()
+    falke = resolved[resolved["carrier"] == "Falke Transport"].groupby("country")["is_on_time"].mean()
+    return float((falke[gams.index] * gams).sum() / gams.sum())
+
+
 # ---------------------------------------------------------------- the cleaned table (block 2 checkpoint)
 def make_clean_table(df: pd.DataFrame) -> pd.DataFrame:
     """Columns where a plain average is the right KPI: empty means 'does not apply'."""
@@ -235,6 +242,7 @@ def assert_findings(r: dict) -> list[str]:
     for c, v in p["countries"].items():
         need(v["Gams Cargo"] - v["Falke Transport"] >= 3.0, f"Gams ahead of Falke in {c} by 3 pts")
         need(v["gams_resolved"] >= 150 and v["falke_resolved"] >= 60, f"group sizes in {c}")
+    need(p["overall"]["Gams Cargo"] - p["falke_on_gams_routes_pct"] >= 5.0, "on Gams' routes, Falke is 5 pts behind")
     e = r["express"]
     need(e["Luchs Logistik"]["Standard"]["on_time_pct"] - e["Luchs Logistik"]["Express"]["on_time_pct"] >= 30,
          "Luchs Express misses its promise far more often")
@@ -332,6 +340,8 @@ def main() -> None:
                           "falke_resolved": by_country[c]["Falke Transport"]["resolved"]} for c in both},
         "gams_share_in_hu_it_si_pct": pct(df[df["carrier"] == "Gams Cargo"]["country"].isin(["HU", "IT", "SI"]).mean()),
         "falke_share_in_at_pct": pct((df[df["carrier"] == "Falke Transport"]["country"] == "AT").mean()),
+        # The fair test: Falke's on-time rate in each country, weighted like Gams' shipments (its routes)
+        "falke_on_gams_routes_pct": pct(falke_on_gams_routes(resolved)),
     }
 
     lazy = lazy_views(raw)

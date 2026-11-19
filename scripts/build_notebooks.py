@@ -521,34 +521,51 @@ print(count.fillna(0).astype(int).to_string())
 print()
 print("TABLE 3. The share of each carrier's shipments that go to Hungary, Italy or Slovenia, in %")
 print(share.round(1).to_string())
+print()
+gams_routes = count["Gams Cargo"].dropna()                                  # how many Gams shipments go to each country
+fair = (rate.loc[gams_routes.index, "Falke Transport"] * gams_routes).sum() / gams_routes.sum()
+gams_all = known.loc[known["carrier"] == "Gams Cargo", "on_time"].mean() * 100
+print("THE FAIR TEST: both carriers on the same routes (the countries of Gams Cargo, with its numbers of shipments)")
+print(f"Falke Transport {fair:.1f} %, Gams Cargo {gams_all:.1f} %")
 
 # The chart: Falke Transport and Gams Cargo, overall and within each country
 import matplotlib.pyplot as plt
-overall = (known.groupby("carrier")["on_time"].mean() * 100).to_frame("Overall").T
+overall = (known.groupby("carrier")["on_time"].mean() * 100).to_frame("All shipments").T
 chart = pd.concat([overall, rate])[["Falke Transport", "Gams Cargo"]]
 ax = chart.plot.bar(color=["#E66A1F", "#1B9E5A"], figsize=(10, 3.6), rot=0, width=0.8)
 ax.set_ylabel("On time %")
 ax.set_ylim(0, 125)
 ax.set_yticks(range(0, 101, 20))
 ax.legend(title=None, ncols=2, loc="upper right")
-ax.set_title("Gams Cargo is behind overall, but ahead in every country where both had shipments")
+ax.set_title("Gams Cargo is behind on all shipments, but ahead in every country where both had shipments")
 for bars, carrier in zip(ax.containers, chart.columns):   # no bar and no number where a carrier had no shipments
     ax.bar_label(bars, labels=[f"{v:.1f}" if pd.notna(v) else "" for v in chart[carrier]], fontsize=9)
 plt.show()
 # CHECK: AT: Gams «paradox.countries.AT.Gams Cargo», Falke «paradox.countries.AT.Falke Transport»; HU: Gams «paradox.countries.HU.Gams Cargo», Falke «paradox.countries.HU.Falke Transport»
 # CHECK: IT: Gams «paradox.countries.IT.Gams Cargo», Falke «paradox.countries.IT.Falke Transport»; SI: Gams «paradox.countries.SI.Gams Cargo», Falke «paradox.countries.SI.Falke Transport»
 # CHECK: Gams Cargo «paradox.gams_share_in_hu_it_si_pct»
+# CHECK: Falke Transport «paradox.falke_on_gams_routes_pct» %, Gams Cargo «paradox.overall.Gams Cargo» %
 ''', form=True),
     md('''
-**How to read the output.** The cell prints three tables and a chart.
+**How to read the output.** The cell prints three tables, a fair test and a chart.
 
 - **Table 1** is the on-time rate in %. Example: in Italy (IT), Gams Cargo was on time for «by_country.IT.Gams Cargo.on_time_pct» % of its shipments.
 - **Table 2** is not a percentage. It shows how many shipments are behind each number of table 1. Example: the «by_country.IT.Gams Cargo.on_time_pct» % of Gams Cargo in Italy come from «by_country.IT.Gams Cargo.resolved» shipments. A rate from only a few shipments is less certain.
 - **Table 3** shows how much of each carrier's work goes to the three countries with long routes.
-- **The chart** shows Falke Transport and Gams Cargo next to each other: first overall, then for each country.
+- **The fair test** compares both carriers on the same routes (see below).
+- **The chart** shows Falke Transport and Gams Cargo next to each other: first all their shipments together, then each country.
 - The word *none* means: this carrier had no shipments to that country in 2025.
 
-Gams Cargo is better than Falke Transport **in every country where both had shipments in 2025**. But overall, Gams is behind («paradox.overall.Gams Cargo» % against «paradox.overall.Falke Transport» %). Why? «paradox.gams_share_in_hu_it_si_pct» % of Gams shipments go to Hungary, Italy and Slovenia. These are long routes, and every carrier is late more often there. «paradox.falke_share_in_at_pct» % of Falke shipments stay in Austria. An overall average mixes the carrier with its routes.
+Gams Cargo is better than Falke Transport **in every country where both had shipments in 2025**. But over all its shipments, Gams is behind («paradox.overall.Gams Cargo» % against «paradox.overall.Falke Transport» %). How can both be true?
+
+**The overall rate counts shipments, not countries.** It is all on-time shipments of a carrier, divided by all its shipments. So it depends on *where* the shipments go:
+
+- «paradox.falke_share_in_at_pct» % of Falke shipments go to Austria: short routes, where being on time is easier.
+- «paradox.gams_share_in_hu_it_si_pct» % of Gams shipments go to Hungary, Italy and Slovenia: long routes, where every carrier is late more often.
+
+So the overall number of Falke is mostly an Austria number, and the overall number of Gams is mostly a long-route number.
+
+**The fair test: the same routes for both.** On the routes of Gams (its countries, with its numbers of shipments), Falke would be on time for only «paradox.falke_on_gams_routes_pct» %, against «paradox.overall.Gams Cargo» % for Gams. Gams is the more reliable carrier. It only drives the harder routes.
 
 > **A number can be correct and still answer the wrong question.**
 '''),

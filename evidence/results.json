@@ -1512,7 +1512,8 @@
       }
     },
     "gams_share_in_hu_it_si_pct": 83.5,
-    "falke_share_in_at_pct": 65.9
+    "falke_share_in_at_pct": 65.9,
+    "falke_on_gams_routes_pct": 78.3
   },
   "checks": {
     "luchs_december_on_time_pct": 64.0,
