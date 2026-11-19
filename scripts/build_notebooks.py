@@ -532,14 +532,18 @@ print(f"Falke Transport {fair:.1f} %, Gams Cargo {gams_all:.1f} %")
 import matplotlib.pyplot as plt
 overall = (known.groupby("carrier")["on_time"].mean() * 100).to_frame("All shipments").T
 chart = pd.concat([overall, rate])[["Falke Transport", "Gams Cargo"]]
+sizes = pd.concat([known.groupby("carrier").size().to_frame("All shipments").T, count])[chart.columns]   # shipments behind each bar
 ax = chart.plot.bar(color=["#E66A1F", "#1B9E5A"], figsize=(10, 3.6), rot=0, width=0.8)
 ax.set_ylabel("On time %")
 ax.set_ylim(0, 125)
 ax.set_yticks(range(0, 101, 20))
 ax.legend(title=None, ncols=2, loc="upper right")
-ax.set_title("Gams Cargo is behind on all shipments, but ahead in every country where both had shipments")
+ax.set_title("Gams Cargo is behind on all shipments, but ahead in every country where both had shipments\\n"
+             "On top: on time %.   Inside: the number of shipments with a known result.", fontsize=10)
 for bars, carrier in zip(ax.containers, chart.columns):   # no bar and no number where a carrier had no shipments
     ax.bar_label(bars, labels=[f"{v:.1f}" if pd.notna(v) else "" for v in chart[carrier]], fontsize=9)
+    ax.bar_label(bars, labels=[f"{n:,.0f}" if pd.notna(v) else "" for v, n in zip(chart[carrier], sizes[carrier])],
+                 label_type="center", color="white", fontsize=8)
 plt.show()
 # CHECK: AT: Gams «paradox.countries.AT.Gams Cargo», Falke «paradox.countries.AT.Falke Transport»; HU: Gams «paradox.countries.HU.Gams Cargo», Falke «paradox.countries.HU.Falke Transport»
 # CHECK: IT: Gams «paradox.countries.IT.Gams Cargo», Falke «paradox.countries.IT.Falke Transport»; SI: Gams «paradox.countries.SI.Gams Cargo», Falke «paradox.countries.SI.Falke Transport»
@@ -553,7 +557,7 @@ plt.show()
 - **Table 2** is not a percentage. It shows how many shipments are behind each number of table 1. Example: the «by_country.IT.Gams Cargo.on_time_pct» % of Gams Cargo in Italy come from «by_country.IT.Gams Cargo.resolved» shipments. A rate from only a few shipments is less certain.
 - **Table 3** shows how much of each carrier's work goes to the three countries with long routes.
 - **The fair test** compares both carriers on the same routes (see below).
-- **The chart** shows Falke Transport and Gams Cargo next to each other: first all their shipments together, then each country.
+- **The chart** shows Falke Transport and Gams Cargo next to each other: first all their shipments together, then each country. The number on top of a bar is the on-time rate in %; the number inside is how many shipments are behind it.
 - The word *none* means: this carrier had no shipments to that country in 2025.
 
 Gams Cargo is better than Falke Transport **in every country where both had shipments in 2025**. But over all its shipments, Gams is behind («paradox.overall.Gams Cargo» % against «paradox.overall.Falke Transport» %). How can both be true?
