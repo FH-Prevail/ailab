@@ -286,9 +286,9 @@ Before class, I asked two AIs the quick question, with the same file. The last r
 
 | Asked before class | Falke on time | What it decided without asking | Its answer |
 |---|---|---|---|
-| Claude Haiku 5.5 | {HAIKU_FALKE} % | removed repeated rows, merged names, did not count lost shipments | "Falke is the most reliable" |
-| GPT-6 Astra (Codex) | {GPT_FALKE} % | removed repeated rows, merged names, counted lost as late, did not count shipments in transit | "Falke leads overall, Gams on comparable routes" |
-| **Our metric contract** | **«overall.Falke Transport.on_time_pct» %** | lost counts as late; in transit after the promised day counts as late; the rest is not known yet | by country: section 4 |
+| Claude Haiku 5.5 | {HAIKU_FALKE} % | removed repeated rows, merged names,<br>did not count lost shipments | "Falke is the most reliable" |
+| GPT-6 Astra (Codex) | {GPT_FALKE} % | removed repeated rows, merged names,<br>counted lost as late,<br>did not count shipments in transit | "Falke leads overall, Gams on comparable routes" |
+| **Our metric contract** | **«overall.Falke Transport.on_time_pct» %** | lost counts as late;<br>in transit after the promised day counts as late;<br>the rest is not known yet | by country: section 4 |
 
 - The numbers are close, but the **decision** is different: "Falke" against "it depends on the country".
 - Your AI may have chosen differently again. **What did your AI decide for you?**
@@ -342,10 +342,10 @@ print("4. No delivery date:", len(missing), "rows:", missing["status"].value_cou
 
 | Problem | Evidence | Why it matters |
 |---|---|---|
-| Repeated rows | «data.duplicate_rows» rows repeat a shipment_id; «data.duplicate_rows_luchs» of them are Luchs Logistik | Luchs: «luchs_effect_of_rules.raw_missing_as_late» % on time; «luchs_effect_of_rules.repeats_removed_missing_as_late» % without the repeated rows; «luchs_effect_of_rules.clean» % with all our rules |
-| Six names, four carriers | "Biber Freight GmbH" («data.carrier_spelling_counts.Biber Freight GmbH» rows), "BIBER FREIGHT" («data.carrier_spelling_counts.BIBER FREIGHT» rows) | "BIBER FREIGHT" is second in a quick table |
-| Grams in a kg column | Wels from 1 September: the median weight «data.wels_median_weight_before_sep» becomes «data.wels_median_weight_from_sep:,.0f» | every weight, and every cost per kg |
-| No delivery date | «data.raw_rows_without_delivery_date» shipments: «data.status_counts.lost» lost, «data.status_counts.in_transit» in transit («data.overdue_in_transit» of them already overdue) | the on-time rate depends on what you do with them |
+| Repeated rows | «data.duplicate_rows» rows repeat a shipment_id;<br>«data.duplicate_rows_luchs» of them are Luchs Logistik | Luchs: «luchs_effect_of_rules.raw_missing_as_late» % on time;<br>«luchs_effect_of_rules.repeats_removed_missing_as_late» % without the repeated rows;<br>«luchs_effect_of_rules.clean» % with all our rules |
+| Six names, four carriers | "Biber Freight GmbH" («data.carrier_spelling_counts.Biber Freight GmbH» rows),<br>"BIBER FREIGHT" («data.carrier_spelling_counts.BIBER FREIGHT» rows) | "BIBER FREIGHT" is second in a quick table |
+| Grams in a kg column | Wels from 1 September:<br>the median weight «data.wels_median_weight_before_sep» becomes «data.wels_median_weight_from_sep:,.0f» | every weight, and every cost per kg |
+| No delivery date | «data.raw_rows_without_delivery_date» shipments: «data.status_counts.lost» lost,<br>«data.status_counts.in_transit» in transit («data.overdue_in_transit» of them already overdue) | the on-time rate depends<br>on what you do with them |
 
 When we asked Claude Haiku to check the data first, it found all four problems. It guessed the grams from the numbers alone: every value was a multiple of 100, and the weight no longer matched the cost. That is a guess, not a proof: only the warehouse can confirm it.
 
@@ -838,8 +838,8 @@ An app that runs is not always correct.
 | IT (Italy) | All services | Jan to Dec | Gams Cargo | On time % and Known result | «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved» |
 | IT (Italy) | All services | Jan to Dec | Falke Transport | On time % | «by_country.IT.Falke Transport.on_time_pct» % |
 | DE (Germany) | Standard | Jan to Dec | Luchs Logistik | On time % | «by_country_service.DE.Standard.Luchs Logistik.on_time_pct» % |
-| All countries | All services | December only: both handles on 12 (Dec) | Luchs Logistik | On time % | «checks.luchs_december_on_time_pct» % |
-| CZ (Czechia) | All services | Jan to Dec | Gams Cargo | its row | no row for Gams Cargo, and a line that says it has no shipments |
+| All countries | All services | Dec only: both handles on 12 | Luchs Logistik | On time % | «checks.luchs_december_on_time_pct» % |
+| CZ (Czechia) | All services | Jan to Dec | Gams Cargo | its row | no row; a line says it has no shipments |
 
 **Is a number wrong?** In your AI chat, write what you expected and what you saw: "For Italy, Gams Cargo should show «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved» shipments with a known result. My app shows ... Find the mistake and give me the complete file again." Then, in the app editor, replace all the code, click **Save**, and check the numbers again.
 
@@ -1441,9 +1441,9 @@ Three ways to work with AI, and each one needs its own check.
 
 | | Good for | Not for | Your check |
 |---|---|---|---|
-| **Vibe analytics** | exploring a new table, quick questions, a first look | a decision without written definitions | evidence and counts; one number by hand |
-| **Vibe coding** | prototypes, internal tools, dashboards on test data | daily use with real data, without a code review | test with numbers you already trust |
-| **MCP** | connecting AI to live systems and documents | changing data without a human who approves | read the trace: which tool, which inputs, which result |
+| **Vibe analytics** | exploring a new table,<br>quick questions, a first look | a decision without<br>written definitions | evidence and counts;<br>one number by hand |
+| **Vibe coding** | prototypes, internal tools,<br>dashboards on test data | daily use with real data,<br>without a code review | test with numbers<br>you already trust |
+| **MCP** | connecting AI to live systems<br>and documents | changing data without<br>a human who approves | read the trace: which tool,<br>which inputs, which result |
 
 **What I hope you remember from today**
 
