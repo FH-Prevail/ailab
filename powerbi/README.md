@@ -13,19 +13,26 @@ The MCP server cannot draw charts (visuals). The skill does not change the open 
 
 - Windows with **Power BI Desktop** (free). The local MCP server does not run on macOS.
 - **Node.js 20 or newer** (for `npx` and the report tool).
-- An MCP host: **Claude Code**, or **VS Code with GitHub Copilot** (Copilot is free for verified students).
+- An MCP host: **Claude Code** or **GitHub Copilot CLI**, or VS Code with GitHub Copilot. Copilot is free for verified students: apply on [GitHub Education](https://github.com/settings/education/benefits).
 - This repository: `app/app.py`, `data/shipments_2025_clean.csv`, `evidence/check_table.csv`.
 
 ## Setup (once)
 
 1. **Power BI Desktop:** before you import anything, open *File, Options and settings, Options, Current file, Regional settings* and set *Locale for import* to **English (United States)**. The CSV uses a decimal point; with a German locale, 23.77 € would be read as 2,377 €. In the same window, under *Data load*, untick *Auto date/time*: otherwise Power BI adds a hidden date table for every date column.
 2. *Get data, Text/CSV*, choose `data/shipments_2025_clean.csv`, *Load*. Rename the table to `shipments`.
-3. *File, Save as, Browse this device*. In the save window, open the folder `powerbi` of this repository (the folder of this file), name the file `CarrierScorecard`, and set *Save as type* (under the file name) to **Power BI project files (*.pbip)**; the default is `.pbix`, which the report skill cannot edit. The project is then `powerbi/CarrierScorecard.pbip`, inside the folder where you start Claude Code, so the agent can read and change it.
+3. *File, Save as, Browse this device*. In the save window, open the folder `powerbi` of this repository (the folder of this file), name the file `CarrierScorecard`, and set *Save as type* (under the file name) to **Power BI project files (*.pbip)**; the default is `.pbix`, which the report skill cannot edit. The project is then `powerbi/CarrierScorecard.pbip`, inside the folder where you start Claude Code or Copilot CLI, so the agent can read and change it.
 4. In Claude Code, install Microsoft's `powerbi-authoring` plugin. It brings both parts: the MCP server and the report authoring skill (checked on 17 November 2026, plugin version 0.3.22).
 
    ```
    claude plugin marketplace add microsoft/skills-for-fabric
    claude plugin install powerbi-authoring@fabric-collection
+   ```
+
+   In GitHub Copilot CLI, the same two commands start with `copilot` (tested on 19 November 2026 with Copilot CLI 1.0.114):
+
+   ```
+   copilot plugin marketplace add microsoft/skills-for-fabric
+   copilot plugin install powerbi-authoring@fabric-collection
    ```
 
    The skill uses Microsoft's report tool. Install it once:
@@ -34,12 +41,12 @@ The MCP server cannot draw charts (visuals). The skill does not change the open 
    npm install -g @microsoft/powerbi-report-authoring-cli@latest
    ```
 
-   Do not also add the server with `claude mcp add`: then Claude Code has every tool twice. In VS Code: install the extension *Power BI Modeling MCP* or add the server in `.vscode/mcp.json` with `"command": "npx", "args": ["-y", "@microsoft/powerbi-modeling-mcp@latest", "--start"]`.
+   Do not also add the server with `claude mcp add` (in Copilot CLI: `copilot mcp add`): then the agent has every tool twice. In VS Code: install the extension *Power BI Modeling MCP* or add the server in `.vscode/mcp.json` with `"command": "npx", "args": ["-y", "@microsoft/powerbi-modeling-mcp@latest", "--start"]`.
 5. The server blocks every tool until its licence terms (EULA) are accepted. Read them first; the agent then asks you to accept them once.
 
 ## The prompts
 
-Open a terminal in the folder of this repository and type `claude`. Run the prompts one at a time, with `CarrierScorecard` open in Power BI Desktop. They are in [prompts.md](prompts.md). If the agent cannot create a measure, [measures.dax](measures.dax) has all six to paste in by hand (*Modeling, New measure*).
+Open a terminal in the folder of this repository and type `claude` (in Copilot CLI: `copilot`). Run the prompts one at a time, with `CarrierScorecard` open in Power BI Desktop. They are in [prompts.md](prompts.md). If the agent cannot create a measure, [measures.dax](measures.dax) has all six to paste in by hand (*Modeling, New measure*).
 
 ## What to check
 

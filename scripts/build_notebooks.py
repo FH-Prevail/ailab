@@ -730,6 +730,14 @@ NB2 = [
 > **An app that runs is not always correct.**
 
 **Watch first (live demo).** I give the spec of section 1 to an AI coding tool (Claude Code). It writes the file `app.py`. We run it and check one number: Italy, Gams Cargo, «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
+
+**No Claude Code? GitHub Copilot CLI is free for students.** Copilot CLI is an AI coding tool for the terminal, like Claude Code. To get it (checked on 19 November 2026):
+
+1. **Apply as a student** on [GitHub Education](https://github.com/settings/education/benefits): sign in to GitHub and click *Start an application*. You prove that you study, for example with your FH email address or a photo of your student card. The check can take a few days. After that, activate *Copilot Student* on the same page.
+2. **Install Copilot CLI.** On Windows, in a terminal: `winget install Microsoft.PowerShell` (Copilot CLI needs the newer PowerShell), then `winget install GitHub.Copilot`. Other systems: [Installing GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli).
+3. **Start it:** open a new terminal in your project folder and type `copilot`. The first time, type `/login` and follow the steps.
+
+**Free, and it stays free:** the student plan chooses the model for you, and it has a monthly allowance. Never set a budget for extra usage, and never upgrade: then you pay nothing. When the allowance is used up, wait for the next month. If GitHub shows you only paid options, do not buy anything: wait a few days.
 '''),
     md(f"""
 ## Before you start
@@ -1386,6 +1394,19 @@ To try it yourself (Windows and Power BI Desktop), on the course page:
 
 - [powerbi/README.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/README.md): all setup steps, also how to install the MCP server and the skill.
 - [powerbi/prompts.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/prompts.md): the four prompts in full, with what you should see after each one.
+
+**With GitHub Copilot CLI** (free for students, see notebook 2, "Watch first"): Microsoft's plugin works there too. It brings both parts, the MCP server and the report skill. In a terminal:
+
+```
+copilot plugin marketplace add microsoft/skills-for-fabric
+copilot plugin install powerbi-authoring@fabric-collection
+```
+
+Then open a terminal in the course folder, type `copilot` and use the same four prompts. The other setup steps are the same as in powerbi/README.md.
+
+To add only one MCP server, Copilot CLI has `copilot mcp add`. For example, only the Power BI server, enough for steps 1 to 3 but not for step 4: `copilot mcp add powerbi-modeling-mcp -- npx -y @microsoft/powerbi-modeling-mcp@latest --start`. Do not add it next to the plugin: then every tool is there twice.
+
+We tested these install commands with Copilot CLI 1.0.114 on 19 November 2026. I ran the demo itself with Claude Code.
 
 > **Same definitions, same numbers, in any tool.**
 '''),

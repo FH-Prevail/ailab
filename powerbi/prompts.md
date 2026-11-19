@@ -1,6 +1,6 @@
 # The Prompts Of The Power BI Demo
 
-Open a terminal in the folder of this repository and type `claude`. Run the prompts one at a time, with your project `powerbi/CarrierScorecard.pbip` open in Power BI Desktop (see [README.md](README.md), "Setup"). Read what the agent plans before you approve a change. Prompts 1 to 3 use the MCP server; prompt 4 uses the report authoring skill.
+Open a terminal in the folder of this repository and type `claude` (in GitHub Copilot CLI: `copilot`). Run the prompts one at a time, with your project `powerbi/CarrierScorecard.pbip` open in Power BI Desktop (see [README.md](README.md), "Setup"). Read what the agent plans before you approve a change. Prompts 1 to 3 use the MCP server; prompt 4 uses the report authoring skill.
 
 Claude Code asks before it calls a Power BI tool, changes a file, or runs a program such as the report tool. Read what it wants to do, then allow it. Prompt 4 has many small steps. Before you send it, press **Shift + Tab** until Claude Code shows that it accepts edits: then it changes files without asking each time, but still asks before it runs a program. When it asks to run the report tool (`powerbi-report-author`), choose the option that does not ask again for it.
 
