@@ -741,7 +741,7 @@ Here we use **Streamlit**: it is the easiest to start with, and the app editor i
 
 **Watch first (live demo).** I give the spec of section 1 to an AI coding tool (Claude Code). It writes the file `app.py`. We run it and check one number: Italy, Gams Cargo, «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
 
-My prompt, in a folder with the file `spec.txt` (the spec of section 1):
+My prompt, in a folder with the file [`spec.txt`](https://github.com/{REPO}/blob/main/app/spec.txt) (the spec of section 1):
 
 ```
 Read spec.txt and write app.py for this spec. Save the complete file as app.py in this folder.
@@ -1739,6 +1739,9 @@ def main():
     for n, cells in [(1, NB1), (2, NB2), (3, NB3)]:
         build(cells, out / NAMES[n])
         print("wrote", NAMES[n], len(cells), "cells")
+    # The spec as a file, for the vibe-coding demo of notebook 2 (one source: SPEC above)
+    (ROOT / "app" / "spec.txt").write_text(SPEC.strip() + "\n", encoding="utf-8", newline="\n")
+    print("wrote app/spec.txt")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,33 @@
+Build a small web app with Streamlit, all in one file app.py.
+
+Who uses it: our dispatchers, who choose a carrier for each shipment.
+What it answers: in a chosen country, service and month range, which carrier keeps
+its delivery promise most often, and at what cost?
+
+Data: load it with exactly this line (it works in the browser too):
+    data = pd.read_csv("https://raw.githubusercontent.com/FH-Prevail/ailab/main/data/shipments_2025_clean.csv")
+One row per shipment of 2025; the data rules are already applied. Columns: shipment_id,
+ship_date, promised_date, delivered_date, status, carrier, service (Standard or Express),
+warehouse, country (AT, DE, CZ, HU, IT, SI), city, distance_km, weight_kg, parcels,
+cost_eur, damaged (1, 0 or empty), customer_id, month (1 to 12), on_time (1, 0 or empty),
+transit_days (empty unless delivered). Empty cells mean "does not apply" or "not known
+yet": never count them as 0.
+
+Inputs, in the sidebar:
+- a selectbox labelled "Destination country" with the options "All countries", AT, DE, CZ, HU, IT, SI
+- a radio labelled "Service" with "All services", "Standard", "Express"
+- a select_slider labelled "Months" for a range from 1 to 12
+
+Outputs:
+1. A table with one row per carrier and these columns: Shipments, Known result (number
+   of non-empty on_time), On time % (mean of on_time x 100), Transit days (mean),
+   Cost per shipment € (mean of cost_eur), Damaged % (mean of damaged x 100).
+   One decimal for percentages, two for transit days and cost.
+2. One sentence naming the carrier with the highest On time %, among carriers with at
+   least 30 shipments with a known result; if none has 30, say so.
+3. A line naming the carriers without shipments in the selection.
+4. If the selection is empty, show "No shipments for this selection" instead of a table.
+5. A bar chart of On time % by carrier.
+
+Code rules: only streamlit, pandas and altair; no other packages; no files on disk;
+short comments in plain English.

@@ -40,6 +40,7 @@ No installation and no account: Streamlit (a Python tool for small web apps) run
 - [Starter](«LINK_STARTER»): the app editor, with a small app that only loads the data. You replace its code with your AI's app and click **Save**.
 - [Reference app](«LINK_REFERENCE»): our version, if you are stuck. Its code is [app/app.py](app/app.py).
 - [An app with one wrong line](app/buggy_app.py): test it and find the line.
+- [The spec](app/spec.txt): the description of the app that notebook 2 gives to the AI, as a file.
 
 The first time, the starter can take up to a minute to load.
 
