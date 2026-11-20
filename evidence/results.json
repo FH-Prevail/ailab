@@ -1515,6 +1515,90 @@
     "falke_share_in_at_pct": 65.9,
     "falke_on_gams_routes_pct": 78.3
   },
+  "wrong_line": {
+    "not_known_yet": 37,
+    "not_known_months": [
+      12
+    ],
+    "IT": {
+      "Biber Freight": {
+        "shipments": 180,
+        "known_right": 180,
+        "known_wrong": 180,
+        "right_pct": 75.0,
+        "wrong_pct": 75.0
+      },
+      "Falke Transport": {
+        "shipments": 133,
+        "known_right": 133,
+        "known_wrong": 133,
+        "right_pct": 69.9,
+        "wrong_pct": 69.9
+      },
+      "Gams Cargo": {
+        "shipments": 433,
+        "known_right": 429,
+        "known_wrong": 433,
+        "right_pct": 85.1,
+        "wrong_pct": 84.3
+      }
+    },
+    "DE_Standard": {
+      "Biber Freight": {
+        "shipments": 235,
+        "known_right": 234,
+        "known_wrong": 235,
+        "right_pct": 84.6,
+        "wrong_pct": 84.3
+      },
+      "Falke Transport": {
+        "shipments": 267,
+        "known_right": 266,
+        "known_wrong": 267,
+        "right_pct": 87.6,
+        "wrong_pct": 87.3
+      },
+      "Luchs Logistik": {
+        "shipments": 592,
+        "known_right": 587,
+        "known_wrong": 592,
+        "right_pct": 92.5,
+        "wrong_pct": 91.7
+      }
+    },
+    "December": {
+      "Biber Freight": {
+        "shipments": 147,
+        "known_right": 141,
+        "known_wrong": 147,
+        "right_pct": 80.9,
+        "wrong_pct": 77.6
+      },
+      "Falke Transport": {
+        "shipments": 159,
+        "known_right": 147,
+        "known_wrong": 159,
+        "right_pct": 88.4,
+        "wrong_pct": 81.8
+      },
+      "Gams Cargo": {
+        "shipments": 95,
+        "known_right": 84,
+        "known_wrong": 95,
+        "right_pct": 89.3,
+        "wrong_pct": 78.9
+      },
+      "Luchs Logistik": {
+        "shipments": 94,
+        "known_right": 86,
+        "known_wrong": 94,
+        "right_pct": 64.0,
+        "wrong_pct": 58.5
+      }
+    },
+    "december_best_right": "Gams Cargo",
+    "december_best_wrong": "Falke Transport"
+  },
   "checks": {
     "luchs_december_on_time_pct": 64.0,
     "luchs_rest_of_year_on_time_pct": 90.1

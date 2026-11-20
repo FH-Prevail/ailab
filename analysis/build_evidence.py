@@ -106,6 +106,36 @@ def falke_on_gams_routes(resolved: pd.DataFrame) -> float:
 
 
 # ---------------------------------------------------------------- the cleaned table (block 2 checkpoint)
+def wrong_line(clean: pd.DataFrame) -> dict:
+    """What the one wrong line of app/buggy_app.py does: on_time.fillna(0) counts 'not known yet' as late.
+
+    The right numbers and the wrong ones, per carrier, for Italy (whole year), Germany Standard and December.
+    """
+    def view(part: pd.DataFrame) -> dict:
+        filled = part.assign(on_time=part["on_time"].fillna(0))
+        out = {}
+        for carrier, g in sorted(part.groupby("carrier")):
+            f = filled[filled["carrier"] == carrier]
+            out[carrier] = {"shipments": int(len(g)),
+                            "known_right": int(g["on_time"].count()), "known_wrong": int(f["on_time"].count()),
+                            "right_pct": pct(g["on_time"].mean()), "wrong_pct": pct(f["on_time"].mean())}
+        return out
+
+    def top(v: dict, which: str) -> str:
+        ok = {c: r[f"{which}_pct"] for c, r in v.items() if r[f"known_{which}"] >= MIN_SHIPMENTS}
+        return max(ok, key=ok.get)
+
+    not_known = clean["on_time"].isna()
+    views = {"IT": view(clean[clean["country"] == "IT"]),
+             "DE_Standard": view(clean[(clean["country"] == "DE") & (clean["service"] == "Standard")]),
+             "December": view(clean[clean["month"] == 12])}
+    return {"not_known_yet": int(not_known.sum()),
+            "not_known_months": sorted(int(m) for m in clean.loc[not_known, "month"].unique()),
+            **views,
+            "december_best_right": top(views["December"], "right"),
+            "december_best_wrong": top(views["December"], "wrong")}
+
+
 def make_clean_table(df: pd.DataFrame) -> pd.DataFrame:
     """Columns where a plain average is the right KPI: empty means 'does not apply'."""
     out = df[["shipment_id", "ship_date", "promised_date", "delivered_date", "status", "carrier", "service",
@@ -262,6 +292,12 @@ def assert_findings(r: dict) -> list[str]:
     need(r["data"]["weight_max_raw"] > 100_000 and r["data"]["grams_rows"] >= 500, "grams visible")
     need(r["data"]["carrier_spellings"] == 6 and len(r["data"]["carriers"]) == 4, "six spellings, four carriers")
     need(r["data"]["overdue_in_transit"] > 0 and r["data"]["not_known_yet"] > 0, "both kinds of in-transit rows")
+    w = r["wrong_line"]
+    need(w["not_known_months"] == [12], "every 'not known yet' shipment is from December")
+    need(w["december_best_right"] != w["december_best_wrong"], "the wrong line changes December's best carrier")
+    need(w["IT"]["Gams Cargo"]["right_pct"] != w["IT"]["Gams Cargo"]["wrong_pct"]
+         and w["IT"]["Falke Transport"]["right_pct"] == w["IT"]["Falke Transport"]["wrong_pct"],
+         "Italy: the wrong line moves Gams, not Falke")
     h = r["hand_example"]
     need(len({h["on_time_pct"], h["dropped_on_time_pct"], h["all_rows_on_time_pct"]}) == 3, "hand example: three answers")
     return failed
@@ -361,6 +397,7 @@ def main() -> None:
         "monthly_on_time_pct": monthly,
         "monthly_shipments": {int(m): int(v) for m, v in df.groupby("month").size().items()},
         "paradox": paradox,
+        "wrong_line": wrong_line(clean_table),
         "checks": {
             "luchs_december_on_time_pct": monthly["Luchs Logistik"][12],
             "luchs_rest_of_year_on_time_pct": pct(resolved[(resolved["carrier"] == "Luchs Logistik") &

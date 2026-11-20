@@ -1036,6 +1036,66 @@ An AI wrote [this app]({RAW}/app/buggy_app.py) from the same spec. It runs and l
 **Your answer** (double-click here, write, press Shift + Enter):
 '''),
     md('''
+**Goal:** compare with our answer, after you have tried. Run the closed cell below (click its ▶ play button). It finds the wrong line in the app and shows which numbers it changes.
+'''),
+    code(f'''
+#@title Our answer: what the wrong line does (run it after you have tried)
+import urllib.request
+import pandas as pd
+RAW = "{RAW}"
+app_lines = urllib.request.urlopen(RAW + "/app/buggy_app.py").read().decode("utf-8").splitlines()
+number = next(i for i, line in enumerate(app_lines, 1) if "fillna(0)" in line)
+print(f"THE WRONG LINE: line {{number}} of the app")
+print("   " + app_lines[number - 1].strip())
+print("It writes 0 (late) into every empty on_time cell. But an empty cell means: not known yet.")
+
+data = pd.read_csv(RAW + "/data/shipments_2025_clean.csv")
+not_known = data["on_time"].isna()
+months = ", ".join(str(m) for m in sorted(data.loc[not_known, "month"].unique()))
+print(f"Not known yet: {{not_known.sum()}} shipments, all shipped in month {{months}} (December)")
+
+def right_and_wrong(part):
+    """One row per carrier: the right numbers, and the numbers with the wrong line."""
+    wrong = part.assign(on_time=part["on_time"].fillna(0))          # what the wrong line does
+    right_g, wrong_g = part.groupby("carrier")["on_time"], wrong.groupby("carrier")["on_time"]
+    return pd.DataFrame({{"Shipments": right_g.size(),
+                         "Known: right": right_g.count(), "Known: wrong": wrong_g.count(),
+                         "On time %: right": (right_g.mean() * 100).round(1),
+                         "On time %: wrong": (wrong_g.mean() * 100).round(1)}})
+
+for title, part in [("TABLE 1. Italy, all services, January to December", data[data["country"] == "IT"]),
+                    ("TABLE 2. Germany, Standard, January to December",
+                     data[(data["country"] == "DE") & (data["service"] == "Standard")]),
+                    ("TABLE 3. All countries, all services, December only", data[data["month"] == 12])]:
+    print()
+    print(title)
+    print(right_and_wrong(part).to_string())
+
+december = right_and_wrong(data[data["month"] == 12])
+best_right = december[december["Known: right"] >= 30]["On time %: right"].idxmax()   # the spec: at least 30 known results
+best_wrong = december[december["Known: wrong"] >= 30]["On time %: wrong"].idxmax()
+print()
+print(f"December, 'Most often on time': {{best_right}} in the right app, {{best_wrong}} with the wrong line")
+# CHECK: Not known yet: «wrong_line.not_known_yet» shipments, all shipped in month 12
+# CHECK: Italy, Gams Cargo: known «wrong_line.IT.Gams Cargo.known_right» / «wrong_line.IT.Gams Cargo.known_wrong», on time «wrong_line.IT.Gams Cargo.right_pct» / «wrong_line.IT.Gams Cargo.wrong_pct»
+# CHECK: December, Luchs Logistik: on time «wrong_line.December.Luchs Logistik.right_pct» / «wrong_line.December.Luchs Logistik.wrong_pct»
+# CHECK: December, 'Most often on time': «wrong_line.december_best_right» in the right app, «wrong_line.december_best_wrong» with the wrong line
+''', form=True),
+    md('''
+<details>
+<summary><b>What to notice (open after you ran "Our answer")</b></summary>
+
+- **The wrong line** fills every empty `on_time` cell with 0. Its comment says "fill the gaps so the average works". But an empty cell means *not known yet*: the shipment was still on its way at the end of the export, and its promised day was later. The line counts these shipments as late, and as known.
+- **Over the whole year, you hardly see it.** Only «wrong_line.not_known_yet» shipments are not known yet. Italy, Gams Cargo: «wrong_line.IT.Gams Cargo.right_pct» % of «wrong_line.IT.Gams Cargo.known_right» becomes «wrong_line.IT.Gams Cargo.wrong_pct» % of «wrong_line.IT.Gams Cargo.known_wrong». A quick look does not notice this.
+- **A clue in the app's table:** with the wrong line, "Known result" is always the same as "Shipments".
+- **In December, it changes the answer.** All the not-known-yet shipments are from December. With the wrong line, the app recommends **«wrong_line.december_best_wrong»** for December instead of **«wrong_line.december_best_right»** (table 3).
+- **The fix:** delete the line. `mean()` and `count()` skip empty cells by themselves. That is what the spec asks: "never count them as 0".
+
+> **One wrong line can change a recommendation. Only a test with numbers you know shows it.**
+
+</details>
+'''),
+    md('''
 ## What to remember
 
 - **An app that runs is not always correct.** Test it with numbers you already trust.
@@ -1503,6 +1563,70 @@ We tested these install commands with Copilot CLI 1.0.114 on 19 November 2026. I
 > **Same definitions, same numbers, in any tool.**
 '''),
     md('''
+## MCP server or skill?
+
+The Power BI demo used two different parts: an **MCP server** and a **skill**. Both make an AI more useful, but in different ways.
+
+| | MCP server | Skill |
+|---|---|---|
+| What it is | a program with tools | a folder with a file SKILL.md:<br>instructions, sometimes scripts |
+| What it gives the AI | access to a system:<br>live data and actions | know-how: the steps and rules<br>for one kind of task |
+| In the Power BI demo | reads and changes<br>the data model | how to write a report page |
+| When the AI uses it | it calls a tool<br>and reads the result | it reads the instructions<br>when a task needs them |
+
+Skills are an open standard too ([Agent Skills](https://agentskills.io)): the same folder works in Claude Code, GitHub Copilot CLI, Codex, OpenCode and other tools. At the start, the AI reads only the name and the description of each skill. It reads the rest only when a task needs it. So, as with the tools of an MCP server, **the description matters**.
+
+> **An MCP server gives the AI access. A skill tells the AI how to do a task. Many tasks need both.**
+
+<details>
+<summary><b>After class: add an MCP server or a skill collection (open the steps)</b></summary>
+
+Both work in Claude Code and in GitHub Copilot CLI. Open a terminal in your project folder. (Checked on 20 November 2026.)
+
+**Add an MCP server:** one command. For example our shipments server, in the course folder:
+
+```
+claude mcp add shipments -- python mcp_server/shipments_server.py
+```
+
+In Copilot CLI, write `copilot mcp add` instead of `claude mcp add`.
+
+**Add a collection of skills from GitHub:** the same two commands as for the Power BI plugin. For example Anthropic's skills for Word, PDF, PowerPoint and Excel files:
+
+```
+copilot plugin marketplace add anthropics/skills
+copilot plugin install document-skills@anthropic-agent-skills
+```
+
+In Claude Code, write `claude plugin` instead of `copilot plugin`. Then start `copilot` (or `claude`) and type `/skills`: the new skills are in the list.
+
+Install only skills that you trust: a skill can contain scripts that run on your computer.
+
+</details>
+
+<details>
+<summary><b>After class: make your own skill and share it (open the steps)</b></summary>
+
+A skill is only a folder with one text file. Example: our metric contract from notebook 1, as a skill. Then the AI uses our rules in every shipment analysis, without a long prompt.
+
+1. In your project folder, make the folder `.claude/skills/shipment-metric-contract`. Claude Code and Copilot CLI both look for skills there.
+2. In this folder, make a text file `SKILL.md` with this content:
+
+```
+«SKILL»
+```
+
+3. **Check the two lines at the top.** `name` is the name of the folder (small letters and hyphens). `description` says what the skill does and when to use it: the AI reads this line first and decides from it. Below the second `---` are the instructions, in plain words.
+4. **Test it:** start `claude` or `copilot` in your project folder and type `/skills`: your skill is in the list. Then ask: "How do we count a shipment that is still in transit and whose promised date is after the export?" The answer should use rule 4.
+5. **Share it:** put your project folder on GitHub, with the folder `.claude/skills` in it. Everyone who downloads the project gets the skill. To share skills with everyone, you can also publish them as a plugin collection, like [anthropics/skills](https://github.com/anthropics/skills): see [Create a plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces).
+
+Never put passwords or company data into a skill: everyone who gets the skill can read it.
+
+**Skills to browse:** [anthropics/skills](https://github.com/anthropics/skills) on GitHub, with examples from Anthropic: Word, PDF, PowerPoint and Excel files, and `skill-creator`, a skill that helps you write and test your own skill. The report skill of the Power BI demo is in [microsoft/skills-for-fabric](https://github.com/microsoft/skills-for-fabric).
+
+</details>
+'''),
+    md('''
 ## What to remember about MCP
 
 - MCP is a **standard**: one server works with every MCP host that supports it, for example Claude, ChatGPT, Gemini CLI, Copilot, or LM Studio with a local model. The host must support the way the server connects (ours runs as a program on the same computer), and it must allow access. The same `shipments_server.py` runs in Claude Code with `claude mcp add shipments -- python shipments_server.py`. How to set it up on your own computer: [The app and the MCP server on your own computer](https://github.com/FH-Prevail/ailab#the-app-and-the-mcp-server-on-your-own-computer) in the README.
@@ -1773,6 +1897,22 @@ def hand_table():
     return "\n".join(lines)
 
 
+def skill_text():
+    """Notebook 3: our metric contract as an Agent Skill (a SKILL.md file). Lines wrap at 84 characters for the box."""
+    import textwrap
+    lines = ["---", "name: shipment-metric-contract",
+             "description: Our rules for counting shipments. Use them in every shipment analysis.", "---", "",
+             "# Our metric contract", "",
+             "Apply these rules to the shipment export, in this order, before you count", "anything. Print the number of rows after each rule.", ""]
+    for i, rule in enumerate(EVIDENCE["data"]["rules"], 1):
+        lines += textwrap.wrap(f"{i}. {rule}", 84, subsequent_indent="   ")
+    lines += ["", "Always show the on-time rate together with the number of shipments with a",
+              "known result. Compare carriers within each destination country, not only over",
+              "all shipments."]
+    assert max(len(line) for line in lines) <= 84
+    return "\n".join(lines)
+
+
 def rules_list():
     return "\n".join(f"{i}. {rule}" for i, rule in enumerate(EVIDENCE["data"]["rules"], 1))
 
@@ -1783,7 +1923,7 @@ def build(cells, path):
                    "kernelspec": {"display_name": "Python 3", "name": "python3"},
                    "language_info": {"name": "python"}}
     for cell in cells:
-        text = cell["src"].replace("«HAND_TABLE»", hand_table()).replace("«RULES»", rules_list())
+        text = cell["src"].replace("«HAND_TABLE»", hand_table()).replace("«RULES»", rules_list()).replace("«SKILL»", skill_text())
         text = fill(text)
         if cell["type"] == "markdown":
             nb.cells.append(nbformat.v4.new_markdown_cell(text))
