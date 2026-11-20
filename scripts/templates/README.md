@@ -15,7 +15,7 @@ You need two things: a **Google account**, and one **AI assistant** that you can
 
 There are no slides. Each notebook has everything, from top to bottom: what I show on the screen, your tasks, and the **Look back** blocks that we open after a task.
 
-**The plan:** block 1 is notebook 1 and section 1 of notebook 2. Block 2 is the rest of notebook 2, then notebook 3. At the end you post three lines in the chat, or give them to me on paper: one carrier recommendation with its number, one app check you ran, and one thing you learned from a recording.
+**The plan:** block 1 is notebook 1 and section 1 of notebook 2. Block 2 is the rest of notebook 2, then notebook 3. At the end you post three lines in the class chat, or give them to me on paper: one carrier recommendation with its number, one app check you ran, and one thing you learned from a recording.
 
 Share only course data with AI tools, never company data.
 

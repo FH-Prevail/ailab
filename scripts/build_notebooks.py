@@ -752,6 +752,8 @@ NB2 = [
     header(2, """
 **The end of block 1, and the first part of block 2.** The dispatchers (the people who book each shipment) should not need to ask you each time. So you make a small app from your analysis: the **Carrier Scorecard**. You do not write the code yourself. You describe the app, your AI writes it, you run it in the browser, and you **test it with numbers you know**.
 
+**Before you build it, you make two choices:** which **AI coding tool** writes the code, and which **UI framework** (ready-made Python code for the screen of an app) fits our task. "Vibe coding in one picture" shows both.
+
 ![The reference app](https://raw.githubusercontent.com/FH-Prevail/ailab/main/app/scorecard.png)
 """, look_back=False),
     md(f'''
@@ -775,13 +777,23 @@ NB2 = [
 | [Claude Code](https://code.claude.com/docs/en/overview) | Anthropic | terminal, VS Code, app | a paid Claude plan |
 | [Codex](https://learn.chatgpt.com/docs/codex/cli) | OpenAI | terminal, VS Code, app | ChatGPT plans; Free with limits |
 | [Antigravity](https://antigravity.google) | Google | its own app, terminal | free, with a weekly limit |
-| GitHub Copilot CLI | GitHub | terminal | free for students (see below) |
+| GitHub Copilot CLI | GitHub | terminal | free for students (steps below) |
 | [OpenCode](https://opencode.ai) | open source | terminal, app | free with a local model |
 | [Cline](https://cline.bot) | open source | VS Code, terminal | free with a local model |
 
 **A local model** runs on your own computer, for example with [Ollama](https://ollama.com) or [LM Studio](https://lmstudio.ai). Your files stay with you, and it costs nothing. But it needs a strong computer with a lot of memory, and small models make more mistakes. So test its app as carefully as any other.
 
-**No paid plan? GitHub Copilot CLI is free for students.** Copilot CLI is an AI coding tool for the terminal, like Claude Code. To get it (checked on 19 November 2026):
+<details>
+<summary><b>After class: try a local model with OpenCode and Ollama (open the steps)</b></summary>
+
+Connect OpenCode to a model in Ollama. Install Ollama, then type `ollama launch opencode` in a terminal and choose a model. Choose one with a context window of 64k or more (the context window is how much text the model can read at once). All steps, also how to install OpenCode: [OpenCode in the Ollama docs](https://docs.ollama.com/integrations/opencode) (checked on 20 November 2026).
+
+</details>
+
+<details>
+<summary><b>No paid plan? GitHub Copilot CLI is free for students (open the steps)</b></summary>
+
+Copilot CLI is an AI coding tool for the terminal, like Claude Code. To get it (checked on 19 November 2026):
 
 1. **Apply as a student** on [GitHub Education](https://github.com/settings/education/benefits): sign in to GitHub and click *Start an application*. You prove that you study, for example with your FH email address or a photo of your student card. The check can take a few days. After that, activate *Copilot Student* on the same page.
 2. **Install Copilot CLI.** On Windows, in a terminal: `winget install Microsoft.PowerShell` (Copilot CLI needs the newer PowerShell), then `winget install GitHub.Copilot`. On macOS or Linux, in a terminal: `npm install -g @github/copilot` (it needs [Node.js](https://nodejs.org) 22 or newer). More ways: [Installing GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli).
@@ -789,17 +801,21 @@ NB2 = [
 
 **Free, and it stays free:** the student plan chooses the model for you, and it has a monthly allowance. Never set a budget for extra usage, and never upgrade: then you pay nothing. When the allowance is used up, wait for the next month. If GitHub shows you only paid options, do not buy anything: wait a few days.
 
+</details>
+
 Here I use **Claude Code**. With the other tools the steps are the same: give it the spec, let it write `app.py`, then test the app.
 
-**Three tools for the screen (UI) of an app.** UI means user interface: the part of an app that you see and click. With these free Python tools, a few lines of code make a web page with filters, tables and charts. You do not need to know how they work inside. Know what each one is good for, name it in your prompt ("Write a Streamlit app that ..."), and let your AI write the code. Then test it, as in section 4.
+**For your tasks today you need none of these tools.** Your AI chat writes the code, and you paste it into the app editor (sections 2 and 3). An AI coding tool does these two steps itself, on your own computer.
 
-| Tool | Good for | An example from our case |
+**UI frameworks: the code for the screen of an app.** UI means user interface: the part of an app that you see and click. A framework is ready-made code that your app is built on. With these three free Python frameworks, a few lines of code make a web page with filters, tables and charts. You do not need to know how they work inside. Know what each one is good for, name it in your prompt ("Write a Streamlit app that ..."), and let your AI write the code. Then test it, as in section 4.
+
+| Framework | Good for | An example from our case |
 |---|---|---|
 | [Streamlit](https://streamlit.io) | a small data app: filters, a table, charts | our Carrier Scorecard |
 | [Gradio](https://www.gradio.app) (Hugging Face) | a demo of an AI model: you type, it answers | a model that predicts late shipments |
 | [Dash](https://dash.plotly.com) (Plotly) | a larger dashboard for a whole team | a carrier dashboard with several pages |
 
-Here we use **Streamlit**: it is the easiest to start with, and the app editor in section 3 runs it in your browser.
+Here we use **Streamlit**: it fits our task (a small data app), it is the easiest to start with, and the app editor in section 3 runs it in your browser.
 
 **Watch first (live demo).** I give the spec of section 1 to Claude Code. It writes the file `app.py`. We run it and check one number: Italy, Gams Cargo, «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
 
@@ -987,7 +1003,7 @@ test_my_app("reference_app.py")   # our reference app
 1. **In your AI chat** (the same chat as your app): ask for **one** change. Ideas are in the boxes below.
 2. **In the app editor:** select everything, paste the complete new file, and click **Save**.
 3. **In your app:** test again with the numbers of section 4.
-4. When your checks pass, click **Share App** again. Put the new link into the box in section 3, and post it in the chat.
+4. When your checks pass, click **Share App** again. Put the new link into the box in section 3, and post it in the class chat.
 
 ```
 Add a second chart: average cost per shipment by carrier.
@@ -1112,7 +1128,7 @@ async def generate(history, config):
                 await asyncio.sleep(30)
                 continue
             print("Gemini did not answer:", " ".join(str(error).split())[:300])
-            print("Go back to the recordings in section 3; the free quota may be used up for today.")
+            print("Go back to the recordings in sections 1 and 2; the free quota may be used up for today.")
             return None
 
 async def ask(question, system=SYSTEM, max_steps=16):
@@ -1290,7 +1306,7 @@ The tool calls that the model chose, and what came back:
 
 </details>
 
-> **The same server works with different hosts: Claude Code here, Gemini after class (section 3 of this notebook).**
+> **The same server works with different hosts and models: Claude Code here, a cell of this notebook with Gemini after class (section 3).**
 '''),
     md(f"""
 ## Before you start
@@ -1513,7 +1529,7 @@ Three ways to work with AI, and each one needs its own check.
 - **An app that runs is not always correct:** test it with numbers you already trust.
 - **Tools let the AI act:** start read-only, read the trace, and check how the AI used each result.
 
-**Before you leave** (post it in the chat or give it to me on paper): one carrier recommendation with its number and count, one app check you ran, one thing you learned from a trace.
+**Before you leave** (post it in the class chat or give it to me on paper): one carrier recommendation with its number and count, one app check you ran, one thing you learned from a trace.
 '''),
     md('''
 ---
