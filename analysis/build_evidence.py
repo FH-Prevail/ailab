@@ -273,6 +273,10 @@ def assert_findings(r: dict) -> list[str]:
         need(v["Gams Cargo"] - v["Falke Transport"] >= 3.0, f"Gams ahead of Falke in {c} by 3 pts")
         need(v["gams_resolved"] >= 150 and v["falke_resolved"] >= 60, f"group sizes in {c}")
     need(p["overall"]["Gams Cargo"] - p["falke_on_gams_routes_pct"] >= 5.0, "on Gams' routes, Falke is 5 pts behind")
+    bc = r["by_country"]
+    for c in ["Biber Freight", "Falke Transport", "Gams Cargo"]:   # "harder routes": every carrier there is below its Austria rate
+        for land in ["HU", "IT", "SI"]:
+            need(bc[land][c]["on_time_pct"] < bc["AT"][c]["on_time_pct"], f"{c} on time less often in {land} than in AT")
     e = r["express"]
     need(e["Luchs Logistik"]["Standard"]["on_time_pct"] - e["Luchs Logistik"]["Express"]["on_time_pct"] >= 30,
          "Luchs Express misses its promise far more often")

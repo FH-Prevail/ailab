@@ -555,7 +555,7 @@ plt.show()
 
 - **Table 1** is the on-time rate in %. Example: in Italy (IT), Gams Cargo was on time for «by_country.IT.Gams Cargo.on_time_pct» % of its shipments.
 - **Table 2** is not a percentage. It shows how many shipments are behind each number of table 1. Example: the «by_country.IT.Gams Cargo.on_time_pct» % of Gams Cargo in Italy come from «by_country.IT.Gams Cargo.resolved» shipments. A rate from only a few shipments is less certain.
-- **Table 3** shows how much of each carrier's work goes to the three countries with long routes.
+- **Table 3** shows how much of each carrier's work goes to Hungary, Italy and Slovenia, the three countries with harder routes.
 - **The fair test** compares both carriers on the same routes (see below).
 - **The chart** shows Falke Transport and Gams Cargo next to each other: first all their shipments together, then each country. The number on top of a bar is the on-time rate in %; the number inside is how many shipments are behind it.
 - The word *none* means: this carrier had no shipments to that country in 2025.
@@ -564,10 +564,12 @@ Gams Cargo is better than Falke Transport **in every country where both had ship
 
 **The overall rate counts shipments, not countries.** It is all on-time shipments of a carrier, divided by all its shipments. So it depends on *where* the shipments go:
 
-- «paradox.falke_share_in_at_pct» % of Falke shipments go to Austria: short routes, where being on time is easier.
-- «paradox.gams_share_in_hu_it_si_pct» % of Gams shipments go to Hungary, Italy and Slovenia: long routes, where every carrier is late more often.
+- «paradox.falke_share_in_at_pct» % of Falke shipments go to Austria, where being on time is easier.
+- «paradox.gams_share_in_hu_it_si_pct» % of Gams shipments go to Hungary, Italy and Slovenia: harder routes, where every carrier is late more often than in Austria.
 
-So the overall number of Falke is mostly an Austria number, and the overall number of Gams is mostly a long-route number.
+**The data shows that these routes are harder.** Read table 1 down one column: the carrier stays the same, only the country changes. Falke Transport is on time for «paradox.countries.AT.Falke Transport» % in Austria, but only for «paradox.countries.HU.Falke Transport» % in Hungary, «paradox.countries.IT.Falke Transport» % in Italy and «paradox.countries.SI.Falke Transport» % in Slovenia. Biber Freight and Gams Cargo are also on time less often in all three countries than in Austria.
+
+So the overall number of Falke is mostly an Austria number, and the overall number of Gams is mostly a number from the harder routes.
 
 **The fair test: the same routes for both.** On the routes of Gams (its countries, with its numbers of shipments), Falke would be on time for only «paradox.falke_on_gams_routes_pct» %, against «paradox.overall.Gams Cargo» % for Gams. Gams is the more reliable carrier. It only drives the harder routes.
 
@@ -1590,6 +1592,7 @@ Skills are an open standard too ([Agent Skills](https://agentskills.io)): the sa
 - [anthropics/skills](https://github.com/anthropics/skills): examples from Anthropic, for example for Word, PDF, PowerPoint and Excel files, and `skill-creator`, a skill that helps you write and test your own skill.
 - [github/awesome-copilot](https://github.com/github/awesome-copilot): a community collection with more than 400 skills, in its folder `skills`. Copilot CLI already includes it.
 - [microsoft/skills-for-fabric](https://github.com/microsoft/skills-for-fabric): the Power BI skill of the demo.
+- [Remotion skills](https://www.remotion.dev/docs/ai/skills): Remotion makes videos from code. With its skills, your AI tool can make animations and animated presentations, for example a short video of your results. The page shows how to install them. Remotion is free for individuals; check its [license](https://www.remotion.dev/license) before you use it at work.
 - **In your tool:** in Claude Code, type `/plugin` and open the tab *Discover*: Anthropic's directory of plugins and skills. In Copilot CLI, `copilot plugin marketplace list` shows the collections it knows.
 
 Anyone can publish a skill, and nobody checks community skills for you. Read a skill before you install it.
