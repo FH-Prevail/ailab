@@ -1375,7 +1375,7 @@ The tool calls that the model chose, and what came back:
 2. **Work in pairs on one laptop.** One person runs the cells, the other checks the results. Change roles after trace 1.
 3. **You need no AI chat and no key.** You only run cells and read.
 
-**Your tasks:** "Start here", then section 1: trace 1 and trace 3. Sections 2 to 4 are at the end of this notebook, for after class. Finished early? Start section 2: it needs no key.
+**Your tasks:** "Start here", then section 1: trace 1 and trace 3. Sections 2 to 4 are at the end of this notebook, below "End of the class": they are for after class. Finished early? Start section 2: it needs no key.
 
 **How to run a cell:** click into it and press **Shift + Enter**. A closed cell shows only its title: click its ▶ play button to run it. If Colab says "This notebook was not authored by Google", click **Run anyway**.
 
@@ -1541,7 +1541,14 @@ To try it yourself (Windows and Power BI Desktop), on the course page:
 - [powerbi/README.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/README.md): all setup steps, also how to install the MCP server and the skill.
 - [powerbi/prompts.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/prompts.md): the four prompts in full, with what you should see after each one.
 
-**With GitHub Copilot CLI** (free for students, see notebook 2, "AI coding tools"): Microsoft's plugin works there too. It brings both parts, the MCP server and the report skill. In a terminal:
+**Install both parts with one plugin.** Microsoft's plugin `powerbi-authoring` brings both: the MCP server and the report skill. In Claude Code, in a terminal (this is how I installed it for the demo):
+
+```
+claude plugin marketplace add microsoft/skills-for-fabric
+claude plugin install powerbi-authoring@fabric-collection
+```
+
+**With GitHub Copilot CLI** (free for students, see notebook 2, "AI coding tools"), the same plugin works too. In a terminal:
 
 ```
 copilot plugin marketplace add microsoft/skills-for-fabric
@@ -1577,6 +1584,15 @@ The Power BI demo used two different parts: an **MCP server** and a **skill**. B
 Skills are an open standard too ([Agent Skills](https://agentskills.io)): the same folder works in Claude Code, GitHub Copilot CLI, Codex, OpenCode and other tools. At the start, the AI reads only the name and the description of each skill. It reads the rest only when a task needs it. So, as with the tools of an MCP server, **the description matters**.
 
 > **An MCP server gives the AI access. A skill tells the AI how to do a task. Many tasks need both.**
+
+**Where to find skills** (checked on 20 November 2026):
+
+- [anthropics/skills](https://github.com/anthropics/skills): examples from Anthropic, for example for Word, PDF, PowerPoint and Excel files, and `skill-creator`, a skill that helps you write and test your own skill.
+- [github/awesome-copilot](https://github.com/github/awesome-copilot): a community collection with more than 400 skills, in its folder `skills`. Copilot CLI already includes it.
+- [microsoft/skills-for-fabric](https://github.com/microsoft/skills-for-fabric): the Power BI skill of the demo.
+- **In your tool:** in Claude Code, type `/plugin` and open the tab *Discover*: Anthropic's directory of plugins and skills. In Copilot CLI, `copilot plugin marketplace list` shows the collections it knows.
+
+Anyone can publish a skill, and nobody checks community skills for you. Read a skill before you install it.
 
 <details>
 <summary><b>After class: add an MCP server or a skill collection (open the steps)</b></summary>
@@ -1622,7 +1638,7 @@ A skill is only a folder with one text file. Example: our metric contract from n
 
 Never put passwords or company data into a skill: everyone who gets the skill can read it.
 
-**Skills to browse:** [anthropics/skills](https://github.com/anthropics/skills) on GitHub, with examples from Anthropic: Word, PDF, PowerPoint and Excel files, and `skill-creator`, a skill that helps you write and test your own skill. The report skill of the Power BI demo is in [microsoft/skills-for-fabric](https://github.com/microsoft/skills-for-fabric).
+**Ideas for your own skill:** look at the skills in "Where to find skills" above. Each one is a folder with a `SKILL.md`, like yours.
 
 </details>
 '''),
@@ -1660,9 +1676,22 @@ Three ways to work with AI, and each one needs its own check.
 **Thank you.** Sina Mirshahi · Sina.Mirshahi@fh-steyr.at · Notebooks, data and app: [github.com/FH-Prevail/ailab](https://github.com/FH-Prevail/ailab)
 '''),
     md('''
+---
+
+## ■ End of the class
+
+**The class ends here.** Everything below is for after class, at home, when you have time:
+
+- **Section 2:** trace 2 and the four tools of the server. You need no key.
+- **Section 3:** ask Gemini yourself. You need a free key.
+- **Section 4:** give the server a new tool. You need the key of section 3.
+
+---
+'''),
+    md('''
 ## 2 · After class: trace 2 and the four tools (no key needed)
 
-**After class.** In class we stop at "The whole session" above. Sections 2 to 4 are for you, at home, when you have time. Section 2 needs no key.
+**After class.** In class we stop at "End of the class" above. Sections 2 to 4 are for you, at home, when you have time. Section 2 needs no key.
 
 **Did you close Colab after class?** Then first click into the next code cell and choose **Runtime, Run before** in the menu. This runs all cells above it again.
 
