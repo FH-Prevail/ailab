@@ -768,7 +768,30 @@ NB2 = [
 
 > **An app that runs is not always correct.**
 
-**Three tools for the screen of an app.** With these free Python tools, a few lines of code make a web page with filters, tables and charts. You do not need to know how they work inside. Know what each one is good for, name it in your prompt ("Write a Streamlit app that ..."), and let your AI write the code. Then test it, as in section 4.
+**AI coding tools: the AI that writes the code.** An AI coding tool works in a folder on your computer. It reads your files, writes the code into a file and can run it to check its work. It asks you before it changes a file or runs a program. These are well known (checked on 20 November 2026):
+
+| Tool | From | Where you use it | What it costs you |
+|---|---|---|---|
+| [Claude Code](https://code.claude.com/docs/en/overview) | Anthropic | terminal, VS Code, app | a paid Claude plan |
+| [Codex](https://learn.chatgpt.com/docs/codex/cli) | OpenAI | terminal, VS Code, app | ChatGPT plans; Free with limits |
+| [Antigravity](https://antigravity.google) | Google | its own app, terminal | free, with a weekly limit |
+| GitHub Copilot CLI | GitHub | terminal | free for students (see below) |
+| [OpenCode](https://opencode.ai) | open source | terminal, app | free with a local model |
+| [Cline](https://cline.bot) | open source | VS Code, terminal | free with a local model |
+
+**A local model** runs on your own computer, for example with [Ollama](https://ollama.com) or [LM Studio](https://lmstudio.ai). Your files stay with you, and it costs nothing. But it needs a strong computer with a lot of memory, and small models make more mistakes. So test its app as carefully as any other.
+
+**No paid plan? GitHub Copilot CLI is free for students.** Copilot CLI is an AI coding tool for the terminal, like Claude Code. To get it (checked on 19 November 2026):
+
+1. **Apply as a student** on [GitHub Education](https://github.com/settings/education/benefits): sign in to GitHub and click *Start an application*. You prove that you study, for example with your FH email address or a photo of your student card. The check can take a few days. After that, activate *Copilot Student* on the same page.
+2. **Install Copilot CLI.** On Windows, in a terminal: `winget install Microsoft.PowerShell` (Copilot CLI needs the newer PowerShell), then `winget install GitHub.Copilot`. On macOS or Linux, in a terminal: `npm install -g @github/copilot` (it needs [Node.js](https://nodejs.org) 22 or newer). More ways: [Installing GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli).
+3. **Start it:** open a new terminal in your project folder and type `copilot`. The first time, type `/login` and follow the steps.
+
+**Free, and it stays free:** the student plan chooses the model for you, and it has a monthly allowance. Never set a budget for extra usage, and never upgrade: then you pay nothing. When the allowance is used up, wait for the next month. If GitHub shows you only paid options, do not buy anything: wait a few days.
+
+Here I use **Claude Code**. With the other tools the steps are the same: give it the spec, let it write `app.py`, then test the app.
+
+**Three tools for the screen (UI) of an app.** UI means user interface: the part of an app that you see and click. With these free Python tools, a few lines of code make a web page with filters, tables and charts. You do not need to know how they work inside. Know what each one is good for, name it in your prompt ("Write a Streamlit app that ..."), and let your AI write the code. Then test it, as in section 4.
 
 | Tool | Good for | An example from our case |
 |---|---|---|
@@ -778,21 +801,13 @@ NB2 = [
 
 Here we use **Streamlit**: it is the easiest to start with, and the app editor in section 3 runs it in your browser.
 
-**Watch first (live demo).** I give the spec of section 1 to an AI coding tool (Claude Code). It writes the file `app.py`. We run it and check one number: Italy, Gams Cargo, «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
+**Watch first (live demo).** I give the spec of section 1 to Claude Code. It writes the file `app.py`. We run it and check one number: Italy, Gams Cargo, «by_country.IT.Gams Cargo.on_time_pct» % of «by_country.IT.Gams Cargo.resolved».
 
 My prompt, in a folder with the file [`spec.txt`](https://github.com/{REPO}/blob/main/app/spec.txt) (the spec of section 1):
 
 ```
 Read spec.txt and write app.py for this spec. Save the complete file as app.py in this folder.
 ```
-
-**No Claude Code? GitHub Copilot CLI is free for students.** Copilot CLI is an AI coding tool for the terminal, like Claude Code. To get it (checked on 19 November 2026):
-
-1. **Apply as a student** on [GitHub Education](https://github.com/settings/education/benefits): sign in to GitHub and click *Start an application*. You prove that you study, for example with your FH email address or a photo of your student card. The check can take a few days. After that, activate *Copilot Student* on the same page.
-2. **Install Copilot CLI.** On Windows, in a terminal: `winget install Microsoft.PowerShell` (Copilot CLI needs the newer PowerShell), then `winget install GitHub.Copilot`. On macOS or Linux, in a terminal: `npm install -g @github/copilot` (it needs [Node.js](https://nodejs.org) 22 or newer). More ways: [Installing GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli).
-3. **Start it:** open a new terminal in your project folder and type `copilot`. The first time, type `/login` and follow the steps.
-
-**Free, and it stays free:** the student plan chooses the model for you, and it has a monthly allowance. Never set a budget for extra usage, and never upgrade: then you pay nothing. When the allowance is used up, wait for the next month. If GitHub shows you only paid options, do not buy anything: wait a few days.
 '''),
     md(f"""
 ## Before you start
@@ -1450,7 +1465,7 @@ To try it yourself (Windows and Power BI Desktop), on the course page:
 - [powerbi/README.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/README.md): all setup steps, also how to install the MCP server and the skill.
 - [powerbi/prompts.md](https://github.com/FH-Prevail/ailab/blob/main/powerbi/prompts.md): the four prompts in full, with what you should see after each one.
 
-**With GitHub Copilot CLI** (free for students, see notebook 2, "Watch first"): Microsoft's plugin works there too. It brings both parts, the MCP server and the report skill. In a terminal:
+**With GitHub Copilot CLI** (free for students, see notebook 2, "AI coding tools"): Microsoft's plugin works there too. It brings both parts, the MCP server and the report skill. In a terminal:
 
 ```
 copilot plugin marketplace add microsoft/skills-for-fabric
